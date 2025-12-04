@@ -1,0 +1,149 @@
+.pointers-section {
+  background-color: #ebeef5; /* Light background for section */
+  padding: 50px 20px; /* Padding between section edges and content */
+}
+
+.pointers-section__title {
+  font-size: 2rem; /* Increased font size for title */
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.pointers-section__list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly; /* Adjusted for even spacing between cards */
+  gap: 15px; /* Reduced the gap between cards */
+}
+
+.pointer-card {
+  display: flex;
+  flex-direction: column;
+  align-items: left; /* Center the content in the card */
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 20px;
+  width: 100%;
+  max-width: 350px; /* Adjusted to fit cards better */
+  flex-grow: 1; /* Allows the cards to grow and take available space */
+  height: auto; /* Prevent excessive height */
+  min-height: 280px; /* Set a minimum height for consistent card size */
+}
+
+.pointer-card__image-container {
+  margin-bottom: 20px; /* Space between image and text */
+}
+
+.pointer-card__image {
+  width: 120px;  /* Adjusted image size */
+  height: 120px;
+  object-fit: contain;
+}
+
+.pointer-card__text {
+  text-align: left; /* Center the text */
+}
+
+.pointer-card__title {
+  font-size: 1.4rem;  /* Adjusted title font size */
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.pointer-card__description {
+  font-size: 1rem;  /* Adjusted description font size */
+  color: #444;
+}
+
+@media (max-width: 768px) {
+  .pointer-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 100%; /* Allow the cards to take full width on small screens */
+    min-height: unset; /* Remove min-height on small screens to avoid excessive height */
+  }
+
+  .pointer-card__image-container {
+    margin-bottom: 16px;
+  }
+
+  .pointer-card__text {
+    text-align: center;
+  }
+
+  .pointers-section__title {
+    font-size: 1.8rem;  /* Slightly smaller title on mobile */
+  }
+}
+
+/* iPhone specific styles */
+@media only screen and (max-width: 430px) {
+  .pointers-section {
+    padding: 35px 15px;
+  }
+
+  .pointers-section__title {
+    font-size: 1.6rem;
+    margin-bottom: 30px;
+  }
+
+  .pointers-section__list {
+    gap: 12px;
+  }
+
+  .pointer-card {
+    padding: 18px;
+    min-height: 260px;
+  }
+
+  .pointer-card__image {
+    width: 100px;
+    height: 100px;
+  }
+
+  .pointer-card__image-container {
+    margin-bottom: 14px;
+  }
+
+  .pointer-card__title {
+    font-size: 1.2rem;
+    margin-bottom: 6px;
+  }
+
+  .pointer-card__description {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+}
+
+/* Smaller iPhones (SE, Mini) */
+@media only screen and (max-width: 375px) {
+  .pointers-section {
+    padding: 30px 12px;
+  }
+
+  .pointers-section__title {
+    font-size: 1.4rem;
+  }
+
+  .pointer-card {
+    padding: 16px;
+    min-height: 240px;
+  }
+
+  .pointer-card__image {
+    width: 90px;
+    height: 90px;
+  }
+
+  .pointer-card__title {
+    font-size: 1.1rem;
+  }
+
+  .pointer-card__description {
+    font-size: 0.85rem;
+  }
+}

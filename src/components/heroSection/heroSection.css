@@ -1,0 +1,336 @@
+.promo-section__wrapper {
+  padding-top: 10px;
+  padding-bottom: 5rem;
+  background-color: #ffffff;;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  max-width: none;       /* remove max-width to allow full width */
+  width: 100%;           /* full width */
+  margin: 0;             /* remove auto centering */
+  padding-left: 1.5rem;  /* small left gap like header logo */
+  padding-right: 1rem;
+  padding-top: 5rem;     /* increased top padding */
+  min-height: 500px;
+  position: relative;
+  overflow: visible;
+}
+
+
+.promo-section__content {
+  flex: 0 0 48%;
+  margin-left: 4rem;        /* remove any extra left margin */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+  position: relative;
+  z-index: 2;
+}
+
+.promo-section__wrapper img {
+  flex: 0 0 45%;
+  padding-top: 3rem;
+  max-width: 100%;
+  max-height: 480px;
+  height: auto;
+  object-fit: contain;
+  position: relative;
+  z-index: 1;
+  transform: translateX(-15%);  /* move image 50% to the left */
+}
+
+/* Optional text */
+.title {
+  margin: 0 0 0.5rem;
+  line-height: 1.3;
+  font-size: 2.5rem;  /* increased from default */
+  font-weight: 700;   /* bold like reference */
+}
+
+.description {
+  margin: 0 0 1rem;
+  color: #000000;
+  font-size: 1.25rem; /* increased */
+  line-height: 1.5;
+  font-family:Arial, Helvetica, sans-serif;
+  font-weight: 100;
+}
+
+/* ===============================
+   Search control with button INSIDE
+   =============================== */
+.cta-wrap {
+  position: relative;
+  overflow: visible;
+  z-index: 100;
+}
+
+.autocomplete-wrapper {
+  width: 70%;
+  max-width: 500px;
+  max-width: clamp(360px, 42vw, 560px);
+  height: fit-content;
+  position: relative;
+  z-index: 20;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.autocomplete-box.geocoder-control {
+  position: relative;
+  width: 100%;
+  display: block;
+  background: #ffffff;
+  border: 1px solid #cfcfcf;
+  border-radius: 10px;
+  box-shadow: none;
+  overflow: visible;
+  padding-right: 148px;
+  box-sizing: border-box;
+}
+
+#hero-input .mapboxgl-ctrl-geocoder {
+  position: static;
+  width: 100%;
+  min-height: 52px;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+#hero-input input.mapboxgl-ctrl-geocoder--input {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 100%;
+  height: 52px;
+  font-size: 1.05rem;
+  padding: 0 10px 0 40px;  /* Left padding 40px for the icon and 10px on the right */
+  border: none;
+  outline: none;
+  border-radius: 10px;
+  background: transparent url('https://img.icons8.com/ios-filled/50/000000/search.png') no-repeat left center;
+  background-size: 20px;  /* Control icon size */
+  background-position: 10px center; /* Adjusts the position of the icon */
+  box-sizing: border-box;
+}
+
+
+
+#hero-input .mapboxgl-ctrl-geocoder--icon,
+#hero-input .mapboxgl-ctrl-geocoder--pin-right,
+#hero-input .mapboxgl-ctrl-geocoder--button {
+  display: none !important;
+}
+
+#hero-input .suggestions {
+  position: absolute !important;
+  top: calc(100% + 1px) !important;
+  left: -1px !important;
+  right: -149px !important;
+  width: calc(100% + 150px) !important;
+  background: #ffffff;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+  border-radius: 0 0 10px 10px;
+  max-height: 320px;
+  overflow-y: auto;
+  z-index: 999999 !important;
+  margin-top: 0;
+  display: block !important;
+}
+
+/* Base styling for all suggestions - all white by default */
+#hero-input .mapboxgl-ctrl-geocoder--suggestion {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #333 !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  padding: 12px 15px !important;
+  cursor: pointer !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+}
+
+/* Aggressively remove ALL active/selected states */
+#hero-input .mapboxgl-ctrl-geocoder--suggestion:first-child,
+#hero-input .mapboxgl-ctrl-geocoder--suggestion:nth-child(1),
+#hero-input .suggestions .active,
+#hero-input .suggestions li.active,
+#hero-input .mapboxgl-ctrl-geocoder--suggestion.active,
+#hero-input .mapboxgl-ctrl-geocoder--suggestion.mapboxgl-ctrl-geocoder--suggestion-active,
+#hero-input .mapboxgl-ctrl-geocoder--suggestion:focus,
+#hero-input .mapboxgl-ctrl-geocoder--suggestion[aria-selected="true"],
+#hero-input .mapboxgl-ctrl-geocoder--suggestion--active {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border: none !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* ONLY show background on actual mouse hover - NOT on focus or keyboard nav */
+#hero-input .mapboxgl-ctrl-geocoder--suggestion:hover {
+  background-color: #e8f4fd !important;
+  background: #e8f4fd !important;
+  cursor: pointer !important;
+}
+
+.autocomplete-box.geocoder-control .btn-primary {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  height: 40px;
+  padding: 0 16px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  background-color: #ff9900;
+  color:#ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+  z-index: 9990;
+}
+
+.autocomplete-box.geocoder-control .btn-primary:hover {
+  background-color: #cc5200;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .promo-section__wrapper img { flex: 0 0 48%; }
+}
+
+@media (max-width: 768px) {
+  .promo-section__wrapper {
+    flex-direction: column;
+    padding: 1rem;
+    min-height: auto;
+  }
+
+  .promo-section__content,
+  .promo-section__wrapper img {
+    flex: 1 1 100%;
+    max-width: 100%;
+    text-align: center;
+    margin-bottom: 1.25rem;
+    margin-left: 0.25%;
+  }
+
+  .autocomplete-wrapper { max-width: 100%; }
+
+  .autocomplete-box.geocoder-control { padding-right: 140px; }
+
+  #hero-input input.mapboxgl-ctrl-geocoder--input { height: 56px; }
+
+  .autocomplete-box.geocoder-control .btn-primary { height: 44px; right: 8px; }
+}
+
+/* iPhone specific styles */
+@media only screen and (max-width: 430px) {
+  .promo-section__wrapper {
+    padding: 0.75rem;
+    padding-top: 2rem;
+    min-height: auto;
+  }
+
+  .promo-section__content {
+    margin-left: 0;
+    padding: 0 0.5rem;
+  }
+
+  .title {
+    font-size: 1.75rem;
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+  }
+
+  .description {
+    font-size: 1rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+  }
+
+  .autocomplete-wrapper {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .autocomplete-box.geocoder-control {
+    padding-right: 0;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  #hero-input input.mapboxgl-ctrl-geocoder--input {
+    height: 48px;
+    font-size: 0.95rem;
+    padding: 0 12px 0 38px;
+  }
+
+  .autocomplete-box.geocoder-control .btn-primary {
+    position: relative;
+    width: 100%;
+    height: 48px;
+    transform: none;
+    top: 0;
+    right: 0;
+    margin-top: 0.5rem;
+    font-size: 1rem;
+  }
+
+  #hero-input .suggestions {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-height: 250px;
+  }
+
+  .promo-section__wrapper img {
+    transform: translateX(0);
+    max-height: 300px;
+    padding-top: 1rem;
+  }
+}
+
+/* iPhone Plus/Max models */
+@media only screen and (min-width: 414px) and (max-width: 430px) {
+  .title {
+    font-size: 2rem;
+  }
+
+  .description {
+    font-size: 1.1rem;
+  }
+}
+
+/* Smaller iPhones (SE, Mini) */
+@media only screen and (max-width: 375px) {
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .description {
+    font-size: 0.9rem;
+  }
+
+  #hero-input input.mapboxgl-ctrl-geocoder--input {
+    height: 44px;
+    font-size: 0.9rem;
+  }
+
+  .autocomplete-box.geocoder-control .btn-primary {
+    height: 44px;
+    font-size: 0.95rem;
+  }
+}

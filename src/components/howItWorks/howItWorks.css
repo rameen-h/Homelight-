@@ -1,0 +1,669 @@
+/* Main Container */
+.how-it-works-simple-sale-compare {
+  padding: 60px 20px;
+  background-color: #fff;
+}
+
+.section-area__container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.how-it-works-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Header Section */
+.heading {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.section__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #46B6FF;
+  letter-spacing: 1.5px;
+  margin-bottom: 16px;
+}
+
+.section__description {
+  font-size: 36px;
+  font-weight: 700;
+  color: #1a1a1a;
+  line-height: 1.3;
+  margin: 0 0 20px 0;
+}
+
+.section__description sup {
+  font-size: 20px;
+  top: -0.8em;
+}
+
+.mobile-break {
+  display: none;
+}
+
+.how-it-works-container__detailed_description {
+  font-size: 18px;
+  color: #666;
+  line-height: 1.6;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Process Steps Container */
+.how-it-works-container__process-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 900px;
+}
+
+/* Step Wrapper */
+.step-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  gap: 16px;
+}
+
+/* Individual Step */
+.process-step__step {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 30px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.process-step__step:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Step Number - Fills on scroll when .active class is added */
+.step-number {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #46B6FF;
+  color: #46B6FF;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.step-number.active {
+  background-color: #46B6FF;
+  color: white;
+}
+
+/* Split step styling */
+.split-step {
+  gap: 20px;
+}
+
+.split-step .step-number {
+  margin: 20px 0;
+}
+
+/* Icon */
+.process-step__step .icon {
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.process-step__step .icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Description */
+.process-step__step .desc h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+}
+
+.process-step__step .desc p {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Connector Lines */
+.line-top {
+  margin: 0 0 20px 0;
+}
+
+.line-top-mobile {
+  display: none;
+}
+
+/* Split Step (Investors vs Agents) */
+.split-step {
+  width: 100%;
+  max-width: 1000px;
+}
+
+.split-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 0 0 40px 0;
+  position: relative;
+  width: 100%;
+  height: 114px;
+  gap: 0;
+}
+
+.center-line {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 30px;
+  background: linear-gradient(to bottom, transparent, #46B6FF);
+}
+
+.branch-lines {
+  position: absolute;
+  top: 30px;
+  width: 45%;
+  height: 70px;
+}
+
+.branch-left {
+  left: 5%;
+}
+
+.branch-right {
+  right: 5%;
+}
+
+.branch-line {
+  position: absolute;
+  height: 2px;
+  background-color: #46B6FF;
+}
+
+.branch-left .branch-line {
+  right: 100%;
+  transform-origin: right center;
+}
+
+.branch-right .branch-line {
+  left: 100%;
+  transform-origin: left center;
+}
+
+/* Three lines at different angles and positions */
+.branch-left .branch-1 {
+  top: 10px;
+  width: 200px;
+  transform: rotate(-15deg);
+}
+
+.branch-left .branch-2 {
+  top: 35px;
+  width: 220px;
+  transform: rotate(-8deg);
+}
+
+.branch-left .branch-3 {
+  top: 60px;
+  width: 200px;
+  transform: rotate(-3deg);
+}
+
+.branch-right .branch-1 {
+  top: 10px;
+  width: 200px;
+  transform: rotate(15deg);
+}
+
+.branch-right .branch-2 {
+  top: 35px;
+  width: 220px;
+  transform: rotate(8deg);
+}
+
+.branch-right .branch-3 {
+  top: 60px;
+  width: 200px;
+  transform: rotate(3deg);
+}
+
+.split-path {
+  flex-shrink: 0;
+  width: 272px;
+  height: 114px;
+  position: absolute;
+}
+
+.split-path-left {
+  transform: scale(-1, -1); /* Flip both horizontally and vertically for inverted Y */
+  left: 50%;
+  margin-left: -272px;
+}
+
+.split-path-right {
+  transform: scaleY(-1); /* Flip vertically for inverted Y */
+  right: 50%;
+  margin-right: -272px;
+}
+
+/* Investors vs Agents Section */
+.investors-vs-agents-step {
+  width: 100%;
+}
+
+.investors-vs-agents-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.vs-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.vs-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #46B6FF 0%, #0080E5 100%);
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(70, 182, 255, 0.3);
+}
+
+/* Split Wrapper */
+.step-split-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  width: 100%;
+}
+
+/* VS Section */
+.vs-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.vs-box {
+  background-color: #fff;
+  border: 2px solid #e0e0e0;
+  border-radius: 16px;
+  padding: 32px;
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.vs-box:hover {
+  border-color: #46B6FF;
+  box-shadow: 0 8px 24px rgba(70, 182, 255, 0.15);
+}
+
+.vs-section .text-wrapper h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 12px 0;
+}
+
+.vs-description {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Logos */
+.logos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.logo-wrapper {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  height: 80px;
+}
+
+.logo-wrapper:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  border-color: #46B6FF;
+}
+
+.logo-wrapper img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Specific Section Colors */
+.investor-vs-section .text-wrapper h3 {
+  color: #0080E5;
+}
+
+.agent-vs-section .text-wrapper h3 {
+  color: #1a1a1a;
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+  .step-split-wrapper {
+    grid-template-columns: 1fr;
+    gap: 60px;
+  }
+
+  .split-wrapper {
+    display: none;
+  }
+
+  .investors-vs-agents-title {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .vs-circle {
+    transform: rotate(90deg);
+  }
+
+  .logos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .section__description {
+    font-size: 28px;
+  }
+
+  .mobile-break {
+    display: block;
+  }
+
+  .how-it-works-container__detailed_description {
+    font-size: 16px;
+  }
+
+  .process-step__step {
+    flex-direction: column;
+    padding: 24px;
+  }
+
+  .step-number {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+
+  .process-step__step .desc h3 {
+    font-size: 18px;
+  }
+
+  .process-step__step .desc p {
+    font-size: 14px;
+  }
+
+  .line-top {
+    display: none;
+  }
+
+  .line-top-mobile {
+    display: block;
+    margin: 20px 0;
+  }
+
+  .vs-title {
+    font-size: 20px;
+  }
+
+  .vs-circle {
+    width: 50px;
+    height: 50px;
+    font-size: 16px;
+  }
+
+  .vs-section .text-wrapper h3 {
+    font-size: 20px;
+  }
+
+  .vs-description {
+    font-size: 14px;
+  }
+
+  .vs-box {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .how-it-works-simple-sale-compare {
+    padding: 40px 16px;
+  }
+
+  .section__description {
+    font-size: 24px;
+  }
+
+  .logos {
+    grid-template-columns: 1fr;
+  }
+
+  .logo-wrapper {
+    height: 70px;
+    padding: 16px;
+  }
+
+  .step-split-wrapper {
+    gap: 40px;
+  }
+}
+
+/* iPhone specific styles */
+@media only screen and (max-width: 430px) {
+  .how-it-works-simple-sale-compare {
+    padding: 35px 12px;
+  }
+
+  .heading {
+    margin-bottom: 50px;
+  }
+
+  .section__title {
+    font-size: 12px;
+    letter-spacing: 1.2px;
+    margin-bottom: 14px;
+  }
+
+  .section__description {
+    font-size: 22px;
+  }
+
+  .section__description sup {
+    font-size: 16px;
+  }
+
+  .how-it-works-container__detailed_description {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .process-step__step {
+    padding: 20px;
+    gap: 18px;
+  }
+
+  .step-number {
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
+  }
+
+  .process-step__step .icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .process-step__step .desc h3 {
+    font-size: 17px;
+    margin-bottom: 10px;
+  }
+
+  .process-step__step .desc p {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .vs-title {
+    font-size: 18px;
+  }
+
+  .vs-circle {
+    width: 45px;
+    height: 45px;
+    font-size: 14px;
+  }
+
+  .vs-box {
+    padding: 20px;
+    gap: 20px;
+  }
+
+  .vs-section .text-wrapper h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .vs-description {
+    font-size: 13px;
+  }
+
+  .logo-wrapper {
+    height: 65px;
+    padding: 14px;
+  }
+
+  .step-split-wrapper {
+    gap: 35px;
+  }
+}
+
+/* Smaller iPhones (SE, Mini) */
+@media only screen and (max-width: 375px) {
+  .how-it-works-simple-sale-compare {
+    padding: 30px 10px;
+  }
+
+  .section__description {
+    font-size: 20px;
+  }
+
+  .section__description sup {
+    font-size: 14px;
+  }
+
+  .how-it-works-container__detailed_description {
+    font-size: 14px;
+  }
+
+  .process-step__step {
+    padding: 18px;
+  }
+
+  .step-number {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+
+  .process-step__step .icon {
+    width: 45px;
+    height: 45px;
+  }
+
+  .process-step__step .desc h3 {
+    font-size: 16px;
+  }
+
+  .process-step__step .desc p {
+    font-size: 12px;
+  }
+
+  .vs-title {
+    font-size: 16px;
+  }
+
+  .vs-circle {
+    width: 40px;
+    height: 40px;
+    font-size: 13px;
+  }
+
+  .vs-box {
+    padding: 18px;
+  }
+
+  .vs-section .text-wrapper h3 {
+    font-size: 17px;
+  }
+
+  .vs-description {
+    font-size: 12px;
+  }
+
+  .logo-wrapper {
+    height: 60px;
+    padding: 12px;
+  }
+}

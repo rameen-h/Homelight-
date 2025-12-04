@@ -1,0 +1,54 @@
+/* partition.css */
+
+/* Blue div with background color and text alignment */
+.blue-div {
+  background-color: #1192e5;  /* Blue background */
+  color: white;               /* White text color */
+  padding: 10px;              /* Padding around the text */
+  width: 100%;                /* Full width */
+  display: flex;
+  align-items: center;        /* Vertically center the text */
+  justify-content: flex-start; /* Align text to the left */
+  font-size: 1rem;            /* Adjust font size */
+  height: 3.5rem;        /* Let the div height be based on its content */
+}
+
+/* Content div with left margin */
+.content-div {
+  padding-left: 5rem;      /* Add left margin */
+  font-size: 1.0rem;           /* Adjust font size */
+  white-space: nowrap;         /* Prevent text from wrapping */
+}
+
+/* iPhone specific styles */
+@media only screen and (max-width: 430px) {
+  .blue-div {
+    padding: 8px;
+    font-size: 0.9rem;
+    height: 3rem;
+    justify-content: center;
+  }
+
+  .content-div {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-size: 0.9rem;
+    white-space: normal;
+    text-align: center;
+  }
+}
+
+/* Smaller iPhones (SE, Mini) */
+@media only screen and (max-width: 375px) {
+  .blue-div {
+    padding: 6px;
+    font-size: 0.85rem;
+    height: 2.8rem;
+  }
+
+  .content-div {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    font-size: 0.85rem;
+  }
+}

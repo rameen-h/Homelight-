@@ -1,0 +1,212 @@
+.footer-container {
+  padding: 15px 30px;  /* Add padding to the left and right for spacing */
+  background-color: #f7f7f7;
+  position: relative;
+}
+
+.footer-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 30px;  /* Margin from left */
+  right: 30px;  /* Margin from right */
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.08);  /* Very faint line */
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul#social-media {
+  display: flex;
+  justify-content: center;
+  gap: 12px;  /* Further reduced */
+  flex-wrap: wrap;  /* Ensure icons wrap if they exceed width */
+  margin-top: 10px;  /* Reduced top margin */
+}
+
+ul#social-media li {
+  display: inline-block;
+  padding: 2px;  /* Further reduced padding */
+}
+
+ul#social-media li a {
+  display: inline-block;
+  width: 18px;  /* Further reduced from 20px */
+  height: 18px;  /* Further reduced from 20px */
+}
+
+ul#social-media li a svg {
+  fill: #333;
+  width: 100%;
+  height: 100%;
+}
+
+ul.accessibility-note {
+  text-align: center;
+  font-size: 0.65rem;  /* Further reduced */
+  color: #888;
+  margin-top: 12px;  /* Further reduced */
+  line-height: 1.4;
+}
+
+ul.last-details {
+  text-align: center;
+  font-size: 0.65rem;  /* Further reduced */
+  color: #888;
+  margin-top: 6px;  /* Further reduced */
+  white-space: nowrap;  /* Keep content in a single line */
+}
+
+ul.last-details li {
+  display: inline;
+  margin-right: 8px;  /* Reduced spacing */
+}
+
+ul.last-details .tos {
+  display: inline;
+}
+
+ul.last-details .tos li {
+  display: inline;
+  margin-right: 15px;
+}
+
+/* Styling for grey links */
+ul.last-details .grey-link {
+  color: grey;
+  text-decoration: none;
+}
+
+ul.last-details .grey-link:hover {
+  text-decoration: underline;
+}
+
+/* Styling for "Do Not Sell or Share My Personal Information" link */
+ul.last-details .privacy-link {
+  color: #1192e5;
+  text-decoration: none;
+}
+
+ul.last-details .privacy-link:hover {
+  text-decoration: underline;
+}
+
+.dre-license {
+  text-align: center;
+  font-size: 0.6rem;  /* Further reduced */
+  color: #888;
+  margin-top: 6px;  /* Further reduced */
+  padding: 0 15px;  /* Add padding for uniformity */
+  line-height: 1.4;
+}
+
+.accessibility-note a {
+  color: black;
+  text-decoration: underline;
+}
+
+.accessibility-note a:hover {
+  text-decoration: none;
+}
+
+ul.lending-license {
+  text-align: center;
+  font-size: 0.65rem;  /* Further reduced */
+  color: #888;
+  margin-top: 12px;  /* Further reduced */
+  padding: 0 15px;  /* Padding to add space on the sides */
+}
+
+@media (max-width: 767px) {
+  .footer-container {
+    padding: 12px;
+  }
+
+  .footer-container::before {
+    left: 15px;  /* Smaller margins on mobile */
+    right: 15px;
+  }
+
+  ul#social-media {
+    justify-content: space-around;
+    gap: 8px;  /* Reduced gap on small screens */
+  }
+
+  ul#social-media li a {
+    width: 16px;  /* Smaller icons for smaller screens */
+    height: 16px;
+  }
+}
+
+/* iPhone specific styles */
+@media only screen and (max-width: 430px) {
+  .footer-container {
+    padding: 10px 15px;
+  }
+
+  .footer-container::before {
+    left: 10px;
+    right: 10px;
+  }
+
+  ul#social-media {
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  ul#social-media li a {
+    width: 18px;
+    height: 18px;
+  }
+
+  ul.accessibility-note,
+  ul.lending-license {
+    font-size: 0.6rem;
+    margin-top: 10px;
+    padding: 0 10px;
+  }
+
+  ul.last-details {
+    font-size: 0.6rem;
+    margin-top: 5px;
+    white-space: normal;
+    line-height: 1.6;
+  }
+
+  ul.last-details li {
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  ul.last-details .tos li {
+    display: block;
+    margin-right: 0;
+  }
+
+  .dre-license {
+    font-size: 0.55rem;
+    margin-top: 5px;
+    padding: 0 10px;
+  }
+}
+
+/* Smaller iPhones (SE, Mini) */
+@media only screen and (max-width: 375px) {
+  ul#social-media li a {
+    width: 16px;
+    height: 16px;
+  }
+
+  ul.accessibility-note,
+  ul.lending-license,
+  ul.last-details {
+    font-size: 0.55rem;
+  }
+
+  .dre-license {
+    font-size: 0.5rem;
+  }
+}

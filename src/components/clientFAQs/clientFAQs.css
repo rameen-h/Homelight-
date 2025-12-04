@@ -1,0 +1,134 @@
+.faq-section {
+  max-width: 900px;  /* Ensuring the section fits well */
+  margin: 0 auto;    /* Keeping the section centered within the page */
+  padding: 20px;     /* Adjusted padding */
+  text-align: left;  /* Align the text inside the FAQ section to the left */
+}
+
+.faq-heading {
+  text-align: center;  /* Keep header centered */
+  font-size: 1.8rem;    /* Smaller font for header */
+  margin-bottom: 1.5rem; /* Spacing between header and questions */
+}
+
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;  /* Reduced gap between questions */
+}
+
+.accordion-node {
+  display: flex;
+  flex-direction: column;
+}
+
+.accordion-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 10px 0;  /* Added space between question and divider */
+}
+
+.accordion-question {
+  font-weight: bold;
+  margin: 0;
+  text-align: left; /* Ensure question text is aligned left */
+}
+
+.accordion-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.chevron {
+  width: 1rem;
+  height: 0.7rem;
+  fill: #333;
+  transition: transform 0.3s ease;
+}
+
+.accordion-btn.open .chevron {
+  transform: rotate(180deg);
+}
+
+.accordion-body {
+  padding: 10px 0; /* Padding for the answer section */
+  font-size: 0.95rem;  /* Slightly smaller font for the answers */
+  color: #444;
+  background-color: #f9f9f9;
+  text-align: left; /* Ensure answer text is aligned left */
+}
+
+.divider {
+  margin: 10px 0;
+  border: 0;
+  border-top: 1px solid #ddd;
+}
+
+/* iPhone specific styles */
+@media only screen and (max-width: 430px) {
+  .faq-section {
+    max-width: 100%;
+    padding: 15px 12px;
+  }
+
+  .faq-heading {
+    font-size: 1.6rem;
+    margin-bottom: 1.3rem;
+  }
+
+  .accordion {
+    gap: 0.7rem;
+  }
+
+  .accordion-title {
+    font-size: 0.95rem;
+    padding: 9px 0;
+  }
+
+  .accordion-body {
+    padding: 9px 0;
+    font-size: 0.9rem;
+  }
+
+  .chevron {
+    width: 0.95rem;
+    height: 0.65rem;
+  }
+
+  .divider {
+    margin: 8px 0;
+  }
+}
+
+/* Smaller iPhones (SE, Mini) */
+@media only screen and (max-width: 375px) {
+  .faq-section {
+    padding: 12px 10px;
+  }
+
+  .faq-heading {
+    font-size: 1.4rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .accordion-title {
+    font-size: 0.9rem;
+    padding: 8px 0;
+  }
+
+  .accordion-body {
+    padding: 8px 0;
+    font-size: 0.85rem;
+  }
+
+  .chevron {
+    width: 0.9rem;
+    height: 0.6rem;
+  }
+}
