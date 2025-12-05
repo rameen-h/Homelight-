@@ -46,6 +46,11 @@ const PromoSection = () => {
         types: "address",
         marker: false,
         flyTo: false,
+        autocomplete: false,
+        render: function(item) {
+          const placeName = item.place_name.replace(/, United States$/, '');
+          return `<div class='mapboxgl-ctrl-geocoder--suggestion'><div class='mapboxgl-ctrl-geocoder--suggestion-title'>${placeName}</div></div>`;
+        }
       });
       geocoderRef.current = geocoder;
 
@@ -60,6 +65,49 @@ const PromoSection = () => {
 
       geocoder.on("result", (e) => {
         console.log("Selected address:", e.result);
+        // Remove "United States" from the input field after selection
+        if (geocoderInputRef.current) {
+          const currentValue = geocoderInputRef.current.value;
+          geocoderInputRef.current.value = currentValue.replace(/, United States$/, '');
+        }
+      });
+
+      // Remove active state from first suggestion when results appear
+      geocoder.on("results", () => {
+        // Run immediately
+        if (geocoderContainerRef.current) {
+          const removeActiveStyles = () => {
+            // Remove active class from all suggestions and force white background
+            const allSuggestions = geocoderContainerRef.current.querySelectorAll(".mapboxgl-ctrl-geocoder--suggestion");
+            allSuggestions.forEach((suggestion) => {
+              suggestion.classList.remove("active");
+              suggestion.removeAttribute("aria-selected");
+              // Force white background with inline styles
+              suggestion.style.backgroundColor = "#ffffff";
+              suggestion.style.background = "#ffffff";
+              suggestion.style.border = "none";
+              suggestion.style.boxShadow = "none";
+              suggestion.style.outline = "none";
+            });
+
+            // Remove active class from parent list items and force transparent background
+            const allListItems = geocoderContainerRef.current.querySelectorAll(".suggestions li");
+            allListItems.forEach((li) => {
+              li.classList.remove("active");
+              li.style.backgroundColor = "transparent";
+              li.style.background = "transparent";
+              li.style.border = "none";
+              li.style.boxShadow = "none";
+              li.style.outline = "none";
+              li.style.margin = "0";
+              li.style.padding = "0";
+            });
+          };
+
+          removeActiveStyles();
+          // Also run after a short delay in case Mapbox re-applies styles
+          setTimeout(removeActiveStyles, 10);
+        }
       });
 
       if (geocoderContainerRef.current && geocoderContainerRef.current.childNodes.length === 0) {
@@ -111,9 +159,8 @@ const PromoSection = () => {
         <h1 class="title">Who will win? Who can
           <br></br>
         close in 7 days?</h1>
-        <br></br>
-        <div className="description no-wrap">
-          Compare the top real estate agents and the largest investor network <br></br> to get the best price and close fast.
+        <div className="description">
+          Compare the top real estate agents and the largest investor network to get the best price and close fast.
         </div>
 
         <div className="cta-wrap">
@@ -128,10 +175,17 @@ const PromoSection = () => {
         </div>
       </div>
 
-      <img
-        alt="Hero image"
-        src="https://d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/hero-simple-sale-compare-mobile-c1d3b133722484d17bfdbad78d13a051.webp"
-      />
+      <picture>
+        <source
+          media="(min-width: 1024px)"
+          srcSet="https://d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/hero-simple-sale-compare-ae0a456c2f5c09d2213f717b97c57132.webp"
+        />
+        <img
+          alt="Hero image"
+          src="https://d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/hero-simple-sale-compare-mobile-c1d3b133722484d17bfdbad78d13a051.webp"
+          loading="eager"
+        />
+      </picture>
     </section>
   );
 };

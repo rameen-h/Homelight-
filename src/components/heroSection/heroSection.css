@@ -1,61 +1,79 @@
 .promo-section__wrapper {
-  padding-top: 10px;
+  padding-top: 9.5rem;
   padding-bottom: 5rem;
-  background-color: #ffffff;;
+  background-color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
-  max-width: none;       /* remove max-width to allow full width */
-  width: 100%;           /* full width */
-  margin: 0;             /* remove auto centering */
-  padding-left: 1.5rem;  /* small left gap like header logo */
-  padding-right: 1rem;
-  padding-top: 5rem;     /* increased top padding */
+  gap: 0;                /* remove gap between portions */
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding-left: 0;       /* remove left padding for full width content */
+  padding-right: 0;
   min-height: 500px;
   position: relative;
   overflow: visible;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
 }
 
 
 .promo-section__content {
-  flex: 0 0 48%;
-  margin-left: 4rem;        /* remove any extra left margin */
+  flex: 0 0 45%;       /* balanced width for content */
+  padding-left: 5rem;    /* increased left padding by 2% for proper margin */
+  padding-right: 2rem;   /* some spacing between content and image */
   display: flex;
   flex-direction: column;
   justify-content: center;
   text-align: left;
   position: relative;
-  z-index: 2;
+  z-index: 1;
+  transform: translateY(-15%);  /* move content 15% higher */
+}
+
+.promo-section__wrapper picture {
+  flex: 10% 50% 60%;
+  padding-bottom: -5rem;       /* exactly 50% width for right portion */
+  padding-right: 5rem;   /* right portion padded on the right */
+  padding-left: -5rem;
+  height:max-content;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;  /* align image to left of its portion */
+  position: relative;
+  z-index: 1;
+  transform: translateY(-5%);  /* move image 5% higher */
 }
 
 .promo-section__wrapper img {
-  flex: 0 0 45%;
-  padding-top: 3rem;
+  width: 100%;
   max-width: 100%;
-  max-height: 480px;
   height: auto;
   object-fit: contain;
-  position: relative;
-  z-index: 1;
-  transform: translateX(-15%);  /* move image 50% to the left */
+  object-position: center;
+  display: block;
+  image-rendering: -webkit-optimize-contrast;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 /* Optional text */
 .title {
-  margin: 0 0 0.5rem;
+  color: #273653;
   line-height: 1.3;
-  font-size: 2.5rem;  /* increased from default */
-  font-weight: 700;   /* bold like reference */
+  font-size: 3.325rem;  /* decreased by 5% from 3.5rem */
+  font-weight: 750;   /* bold like reference */
+  margin-bottom: 0;
 }
 
 .description {
-  margin: 0 0 1rem;
+  margin: 0 0 1.5rem;
   color: #000000;
-  font-size: 1.25rem; /* increased */
-  line-height: 1.5;
-  font-family:Arial, Helvetica, sans-serif;
-  font-weight: 100;
+  font-size: 1.25rem; /* increased from 1.25rem */
+  line-height: 1.6;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 400;
+  max-width: 600px;
 }
 
 /* ===============================
@@ -68,9 +86,8 @@
 }
 
 .autocomplete-wrapper {
-  width: 70%;
-  max-width: 500px;
-  max-width: clamp(360px, 42vw, 560px);
+  width: 100%;  /* increased to 100% to fill space and show full addresses */
+  max-width: clamp(650px, 75vw, 950px);  /* increased width to show placeholder fully */
   height: fit-content;
   position: relative;
   z-index: 20;
@@ -87,14 +104,14 @@
   border-radius: 10px;
   box-shadow: none;
   overflow: visible;
-  padding-right: 148px;
+  padding-right: 10px;
   box-sizing: border-box;
 }
 
 #hero-input .mapboxgl-ctrl-geocoder {
   position: static;
   width: 100%;
-  min-height: 52px;
+  min-height: 60px;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
@@ -106,16 +123,25 @@
   z-index: 1;
   width: 100%;
   max-width: 100%;
-  height: 52px;
-  font-size: 1.05rem;
-  padding: 0 10px 0 40px;  /* Left padding 40px for the icon and 10px on the right */
+  height: 60px;
+  font-size: 1.1rem;
+  padding: 0 18px 0px 40px;  /* Right padding for button, left padding for icon */
   border: none;
   outline: none;
   border-radius: 10px;
   background: transparent url('https://img.icons8.com/ios-filled/50/000000/search.png') no-repeat left center;
-  background-size: 20px;  /* Control icon size */
-  background-position: 10px center; /* Adjusts the position of the icon */
+  background-size: 22px;  /* Control icon size */
+  background-position: 12px center; /* Adjusts the position of the icon */
   box-sizing: border-box;
+  text-overflow: clip !important;
+  overflow: visible !important;
+  white-space: nowrap !important;
+}
+
+/* Ensure placeholder is fully visible */
+#hero-input input.mapboxgl-ctrl-geocoder--input::placeholder {
+  color: #666;
+  opacity: 1;
 }
 
 
@@ -130,54 +156,65 @@
   position: absolute !important;
   top: calc(100% + 1px) !important;
   left: -1px !important;
-  right: -149px !important;
-  width: calc(100% + 150px) !important;
-  background: #ffffff;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-  border-radius: 0 0 10px 10px;
+  right: -200px !important;
+  width: calc(100% + 245px) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-radius: 0 !important;
   max-height: 320px;
   overflow-y: auto;
   z-index: 999999 !important;
-  margin-top: 0;
-  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-/* Base styling for all suggestions - all white by default */
+/* Clean list item styling */
+#hero-input .suggestions li {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Base suggestion styling - white background, no borders */
 #hero-input .mapboxgl-ctrl-geocoder--suggestion {
-  background-color: #ffffff !important;
+  display: block !important;
+  padding: 8px 15px !important;
   background: #ffffff !important;
   color: #333 !important;
   border: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-  padding: 12px 15px !important;
   cursor: pointer !important;
-  border-bottom: 1px solid #f0f0f0 !important;
+  font-weight: 400 !important;
+  font-size: 0.95rem !important;
+  transition: background-color 0.15s ease !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
-/* Aggressively remove ALL active/selected states */
-#hero-input .mapboxgl-ctrl-geocoder--suggestion:first-child,
-#hero-input .mapboxgl-ctrl-geocoder--suggestion:nth-child(1),
-#hero-input .suggestions .active,
-#hero-input .suggestions li.active,
+/* Remove all bold text from suggestions */
+#hero-input .mapboxgl-ctrl-geocoder--suggestion *,
+#hero-input .mapboxgl-ctrl-geocoder--suggestion strong {
+  font-weight: 400 !important;
+  background: transparent !important;
+}
+
+/* Keep white background for ALL states except hover */
 #hero-input .mapboxgl-ctrl-geocoder--suggestion.active,
-#hero-input .mapboxgl-ctrl-geocoder--suggestion.mapboxgl-ctrl-geocoder--suggestion-active,
 #hero-input .mapboxgl-ctrl-geocoder--suggestion:focus,
 #hero-input .mapboxgl-ctrl-geocoder--suggestion[aria-selected="true"],
-#hero-input .mapboxgl-ctrl-geocoder--suggestion--active {
-  background-color: #ffffff !important;
+#hero-input .suggestions li.active,
+#hero-input .suggestions li.active > .mapboxgl-ctrl-geocoder--suggestion {
   background: #ffffff !important;
-  border: none !important;
-  border-bottom: 1px solid #f0f0f0 !important;
   outline: none !important;
   box-shadow: none !important;
+  border: none !important;
 }
 
-/* ONLY show background on actual mouse hover - NOT on focus or keyboard nav */
+/* Light grey background ONLY on hover */
 #hero-input .mapboxgl-ctrl-geocoder--suggestion:hover {
-  background-color: #e8f4fd !important;
-  background: #e8f4fd !important;
-  cursor: pointer !important;
+  background: #f5f5f5 !important;
 }
 
 .autocomplete-box.geocoder-control .btn-primary {
@@ -185,9 +222,9 @@
   top: 50%;
   right: 8px;
   transform: translateY(-50%);
-  height: 40px;
-  padding: 0 16px;
-  font-size: 0.95rem;
+  height: 48px;
+  padding: 0 15px;
+  font-size: 1rem;
   font-weight: 700;
   border: none;
   border-radius: 8px;
@@ -200,15 +237,24 @@
   white-space: nowrap;
   transition: background-color 0.2s ease;
   z-index: 9990;
+  outline: none !important;
+  text-decoration: none !important;
+}
+
+.autocomplete-box.geocoder-control .btn-primary:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
 }
 
 .autocomplete-box.geocoder-control .btn-primary:hover {
   background-color: #cc5200;
+  text-decoration: none !important;
 }
 
 /* Responsive */
 @media (max-width: 992px) {
-  .promo-section__wrapper img { flex: 0 0 48%; }
+  .promo-section__wrapper picture { flex: 0 0 48%; }
 }
 
 @media (max-width: 768px) {
@@ -218,13 +264,23 @@
     min-height: auto;
   }
 
-  .promo-section__content,
-  .promo-section__wrapper img {
+  .promo-section__content {
     flex: 1 1 100%;
     max-width: 100%;
     text-align: center;
     margin-bottom: 1.25rem;
     margin-left: 0.25%;
+  }
+
+  .promo-section__wrapper picture {
+    flex: 1 1 100%;
+    max-width: 100%;
+    transform: translateX(0);
+    padding-top: 1rem;
+  }
+
+  .promo-section__wrapper img {
+    max-width: 100%;
   }
 
   .autocomplete-wrapper { max-width: 100%; }
@@ -275,7 +331,7 @@
   #hero-input input.mapboxgl-ctrl-geocoder--input {
     height: 48px;
     font-size: 0.95rem;
-    padding: 0 12px 0 38px;
+    padding: 0 12px 0 50px;
   }
 
   .autocomplete-box.geocoder-control .btn-primary {
@@ -296,10 +352,13 @@
     max-height: 250px;
   }
 
-  .promo-section__wrapper img {
+  .promo-section__wrapper picture {
     transform: translateX(0);
-    max-height: 300px;
     padding-top: 1rem;
+  }
+
+  .promo-section__wrapper img {
+    max-height: 300px;
   }
 }
 
