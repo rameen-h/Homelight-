@@ -1,7 +1,7 @@
 .client-stories-section {
-  background-color: #f9f9f9; /* Light background */
-  padding: 50px 20px;
-  text-align: center; /* Center the entire section */
+  background-color: #f9f9f9;
+  padding: 60px 20px;
+  text-align: center;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
 }
 
@@ -12,110 +12,126 @@
 }
 
 .client-stories-title {
-  font-size: 1.6rem; /* Smaller font size for "Client Stories" */
+  font-size: 16px;
   text-align: center;
-  color: #1192e5;
-  font-weight: bold;
+  color: #1192e5;;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-bottom: 16px;
 }
 
 .client-stories-subtitle {
-  font-size: 2.4rem; /* Larger and bold for the subtitle */
-  font-weight: bold;
+  font-size: 36px;
+  font-weight: 700;
   text-align: center;
-  margin-bottom: 40px;
+  color: #1a1a1a;
+  margin-bottom: 50px;
+  line-height: 1.3;
 }
 
-.client-testimonial {
+.client-testimonial-wrapper {
   display: flex;
-  justify-content: center; /* Center the content */
-  flex-direction: row; /* Video on left, text on right */
+  justify-content: center;
+  flex-direction: row;
   align-items: center;
-  gap: 30px; /* Space between video and text */
+  gap: 30px;
 }
 
 .testimonial-item {
   display: flex;
-  flex-direction: row; /* Side by side video and text */
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 1000px; /* Increase size of the testimonial */
-  min-height: 400px; /* Ensure a consistent height */
+  max-width: 1100px;
+  gap: 50px;
 }
 
 .testimonial-item__video {
-  width: 550px;  /* Increased video width */
-  height: 350px; /* Increased video height */
+  width: 550px;
+  height: 350px;
   object-fit: cover;
   border-radius: 8px;
-  margin-right: 50px; /* Space between video and text */
+  flex-shrink: 0;
 }
 
-.testimonial-item__text {
+.client-testimonial {
   text-align: left;
   flex: 1;
+  max-width: 500px;
 }
 
-.testimonial-item__quote {
-  font-size: 1.6rem; /* Increased font size for quote */
-  color: #444;
-  margin-bottom: 15px;
+.client-testimonial__words {
+  font-size: 24px;
+  color: #273653;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  font-weight: 400;
 }
 
-.testimonial-item__source {
-  font-size: 1.2rem; /* Adjusted font size for source */
-  color: #777;
-  display: block;  /* Ensures the source name and role are stacked vertically */
+.client-testimonial__source {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.testimonial-item__source-name {
-  font-weight: bold;
-  margin-right: 5px;  /* Optional, you can adjust or remove */
+.client-testimonial__source__name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  display: block;
 }
 
-.testimonial-item__source-role {
-  font-weight: bold;
+.client-testimonial__source__brokerage {
+  font-size: 16px;
+  font-weight: 400;
+  color: #666;
+  display: block;
 }
 
 @media (max-width: 768px) {
-  .client-testimonial {
-    flex-direction: column; /* Stack video and text vertically on mobile */
-    align-items: center;
-    text-align: center;
-    max-width: 100%; /* Allow the cards to take full width on small screens */
-    min-height: unset; /* Remove min-height on small screens to avoid excessive height */
+  .client-testimonial-wrapper {
+    flex-direction: column;
   }
 
   .testimonial-item {
-    flex-direction: column; /* Stack video and text vertically */
-    min-height: auto;
+    flex-direction: column;
+    gap: 20px;
     width: 100%;
     max-width: 100%;
   }
 
   .testimonial-item__video {
-    margin-right: 0;
-    margin-bottom: 16px;
-    width: 100%; /* Full width on mobile */
+    width: 100%;
     max-width: 100%;
-    height: 250px; /* Adjusted height on mobile */
+    height: 250px;
   }
 
-  .testimonial-item__text {
+  .client-testimonial {
     text-align: center;
     width: 100%;
+    max-width: 100%;
   }
 
   .client-stories-title {
-    font-size: 1.4rem;  /* Slightly smaller title on mobile */
-    display: block;
-    visibility: visible;
+    font-size: 12px;
   }
 
   .client-stories-subtitle {
-    font-size: 2rem; /* Slightly smaller subtitle on mobile */
-    display: block;
-    visibility: visible;
+    font-size: 28px;
+    margin-bottom: 40px;
+  }
+
+  .client-testimonial__words {
+    font-size: 20px;
+  }
+
+  .client-testimonial__source__name {
+    font-size: 16px;
+  }
+
+  .client-testimonial__source__brokerage {
+    font-size: 14px;
   }
 }
 
@@ -130,23 +146,18 @@
   }
 
   .client-stories-title {
-    font-size: 1.3rem;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+    font-size: 12px;
+    letter-spacing: 1.2px;
   }
 
   .client-stories-subtitle {
-    font-size: 1.8rem;
+    font-size: 22px;
     margin-bottom: 35px;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
   }
 
   .testimonial-item {
-    min-height: auto;
     flex-direction: column;
+    gap: 15px;
     width: 100%;
   }
 
@@ -155,22 +166,24 @@
     max-width: 100%;
     height: 220px;
     border-radius: 6px;
-    margin-bottom: 14px;
-    margin-right: 0;
   }
 
-  .testimonial-item__text {
+  .client-testimonial {
     width: 100%;
     text-align: center;
   }
 
-  .testimonial-item__quote {
-    font-size: 1.4rem;
-    margin-bottom: 12px;
+  .client-testimonial__words {
+    font-size: 17px;
+    margin-bottom: 15px;
   }
 
-  .testimonial-item__source {
-    font-size: 1.1rem;
+  .client-testimonial__source__name {
+    font-size: 15px;
+  }
+
+  .client-testimonial__source__brokerage {
+    font-size: 13px;
   }
 }
 

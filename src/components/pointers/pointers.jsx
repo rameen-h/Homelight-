@@ -24,7 +24,7 @@ export default function Pointers() {
     <div className="pointers-section">
       <div className="pointers-section__container">
         <h2 className="pointers-section__title">
-          The fastest and easiest way to sell your home
+          The fastest and easiest way to <br></br> sell your home
         </h2>
 
         <div className="pointers-section__list">

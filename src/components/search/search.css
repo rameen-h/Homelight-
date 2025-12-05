@@ -107,8 +107,8 @@
 .ss-geocoder-control .suggestions-wrapper {
   position: fixed;
   z-index: 100;
-  left: -2%;
-  width: 70vw;
+  left: -1%;
+  width:58.5vw;
   max-width: none;
 }
 

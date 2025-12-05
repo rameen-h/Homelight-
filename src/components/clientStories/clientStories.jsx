@@ -16,9 +16,9 @@ const ClientStories = () => {
   return (
     <div className="client-stories-section">
       <div className="client-stories-container">
-        <div className="client-stories-title">Client Stories</div>
+        <div className="client-stories-title">CLIENT STORIES</div>
         <div className="client-stories-subtitle">Take their word for it</div>
-        <div className="client-testimonial">
+        <div className="client-testimonial-wrapper">
           {clientStories.map((story, index) => (
             <div key={index} className="testimonial-item">
               <img
@@ -26,16 +26,15 @@ const ClientStories = () => {
                 alt="Client testimonial video"
                 className="testimonial-item__video"
               />
-              <div className="testimonial-item__text">
-                <div className="testimonial-item__quote">
-                  “{story.quote}”
+              <div className="client-testimonial">
+                <div className="client-testimonial__words">
+                  "{story.quote}"
                 </div>
-                <div className="testimonial-item__source">
-                  <span className="testimonial-item__source-name">
+                <div className="client-testimonial__source">
+                  <span className="client-testimonial__source__name">
                     {story.clientName}
                   </span>
-                  <br></br>
-                  <span className="testimonial-item__source-role">
+                  <span className="client-testimonial__source__brokerage">
                     {story.clientRole}
                   </span>
                 </div>
