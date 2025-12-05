@@ -28,3 +28,41 @@ img {
   max-width: 100%;
   display: block;
 }
+
+/* Base responsive typography */
+html {
+  font-size: 16px;
+}
+
+/* Tablet responsive */
+@media (max-width: 768px) {
+  html {
+    font-size: 15px;
+  }
+
+  body {
+    line-height: 1.4;
+  }
+}
+
+/* iPhone specific styles */
+@media only screen and (max-width: 430px) {
+  html {
+    font-size: 14px;
+  }
+
+  body {
+    line-height: 1.4;
+  }
+}
+
+/* Smaller iPhones (SE, Mini) */
+@media only screen and (max-width: 375px) {
+  html {
+    font-size: 13px;
+  }
+
+  body {
+    line-height: 1.3;
+  }
+}

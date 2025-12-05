@@ -20,6 +20,24 @@
   white-space: nowrap;         /* Prevent text from wrapping */
 }
 
+/* Tablet and mobile responsive */
+@media (max-width: 768px) {
+  .blue-div {
+    padding: 8px;
+    font-size: 0.95rem;
+    height: auto;
+    justify-content: center;
+  }
+
+  .content-div {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    font-size: 0.95rem;
+    white-space: normal;
+    text-align: center;
+  }
+}
+
 /* iPhone specific styles */
 @media only screen and (max-width: 430px) {
   .blue-div {

@@ -69,6 +69,31 @@
   position: relative;
 }
 
+/* Tablet responsive */
+@media (max-width: 768px) {
+  .page-header-component {
+    padding: 0.25rem 1rem;
+  }
+
+  .header-container {
+    padding-left: 1rem;
+    padding-right: 0.75rem;
+    height: 60px;
+  }
+
+  .logo {
+    margin-left: 1rem;
+    max-width: 140px;
+  }
+
+  .button-wrapper .button {
+    padding: 0.55rem 1rem;
+    font-size: 1rem;
+    min-width: 170px;
+    margin-right: 0.35rem;
+  }
+}
+
 /* iPhone specific styles */
 @media only screen and (max-width: 430px) {
   .page-header-component {
