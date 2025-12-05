@@ -104,18 +104,17 @@ const Footer = () => {
       {/* Footer Legal and Accessibility Info */}
       <div className="row">
         <div className="col-xs-12">
-          <ul className="accessibility-note">
+            <ul className="accessibility-note">
             <li>
               Our Commitment to Accessibility: HomeLight is committed to making
               our website accessible and user-friendly to all. While we are
-              constantly working to improve, we welcome your feedback and
-              accommodation requests. If you are having difficulty accessing or
-              navigating our website, or if you have any suggestions to improve
-              accessibility,{' '}
-              <a href="https://help.homelight.com/contact-us">please email our team</a>{' '}
-              or <a href="/about-us">contact us</a>.
-            </li>
-          </ul>
+              constantly working to improve, we welcome</li>
+              <li>your feedback and accommodation requests.
+              If you are having difficulty accessing or navigating our website,
+              or if you have any suggestions to improve accessibility,{' '}
+              <a href="https://help.homelight.com/contact-us">please email </a></li>
+              <li> <a href= "https://help.homelight.com/contact-us"> our team </a> or <a href="/about-us">contact us</a>.</li>
+            </ul>
           <ul className="last-details">
             <li>
               © HomeLight, Inc., 1375 N Scottsdale Road, Suite 140, Scottsdale, AZ
