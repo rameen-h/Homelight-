@@ -142,65 +142,61 @@ const HowItWorks = () => {
 
               <div className="step-split-wrapper">
                 <div className="vs-section investor-vs-section">
-                  <div className="vs-box">
-                    <div className="text-wrapper">
-                      <h3>Talk to investors</h3>
-                      <div className="vs-description">
-                        Investors can help you sell your home for a competitive price in as few as 10 days,
-                        with no additional fees, agent commission, or prep‑work.
-                      </div>
+                  <div className="text-wrapper">
+                    <h3>Talk to investors</h3>
+                    <div className="vs-description">
+                      Investors can help you sell your home for a competitive price in as few as 10 days,
+                      with no additional fees, agent commission, or prep‑work.
                     </div>
-                    <div className="logos">
-                      <div className="logo-wrapper">
-                        <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/investor-ocean-city-e31adcaa7aadcda286498fc1904aaa0b.png" alt="logo" />
-                      </div>
-                      <div className="logo-wrapper">
-                        <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/investor-sundae-3b4dcf442c42cddf24b6382b8bae54dc.png" alt="logo" />
-                      </div>
-                      <div className="logo-wrapper">
-                        <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/investor-abi-298f2880a24392016e4ec2f8ed590b18.png" alt="logo" />
-                      </div>
-                      <div className="logo-wrapper">
-                        <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/investor-tricon-16f255f330a41d01b937a34138a0fef8.png" alt="logo" />
-                      </div>
-                      <div className="logo-wrapper">
-                        <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/investor-homego-b719ec1be03d512133e74043cd98432a.png" alt="logo" />
-                      </div>
-                      <div className="logo-wrapper">
-                        <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/investor-homevestors-3fb45f31ee486106f5df9a8f9099d53e.png" alt="logo" />
-                      </div>
+                  </div>
+                  <div className="logos">
+                    <div className="logo-wrapper">
+                      <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/investor-ocean-city-e31adcaa7aadcda286498fc1904aaa0b.png" alt="logo" />
+                    </div>
+                    <div className="logo-wrapper">
+                      <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/investor-sundae-3b4dcf442c42cddf24b6382b8bae54dc.png" alt="logo" />
+                    </div>
+                    <div className="logo-wrapper">
+                      <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/investor-abi-298f2880a24392016e4ec2f8ed590b18.png" alt="logo" />
+                    </div>
+                    <div className="logo-wrapper">
+                      <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/investor-tricon-16f255f330a41d01b937a34138a0fef8.png" alt="logo" />
+                    </div>
+                    <div className="logo-wrapper">
+                      <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/investor-homego-b719ec1be03d512133e74043cd98432a.png" alt="logo" />
+                    </div>
+                    <div className="logo-wrapper">
+                      <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/investor-homevestors-3fb45f31ee486106f5df9a8f9099d53e.png" alt="logo" />
                     </div>
                   </div>
                 </div>
 
                 {/* Agents Section */}
                 <div className="vs-section agent-vs-section">
-                  <div className="vs-box">
-                    <div className="text-wrapper">
-                      <h3>Talk to agents</h3>
-                      <div className="vs-description">
-                        Agents can get you top dollar in your local market by listing your home.
-                      </div>
+                  <div className="text-wrapper">
+                    <h3>Talk to agents</h3>
+                    <div className="vs-description">
+                      Agents can get you top dollar in your local market by listing your home.
                     </div>
-                    <div className="logos">
-                      <div className="logo-wrapper">
-                        <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/agent-weichert-c731d7b67939d0076e03e765ededd1b1.png" alt="logo" />
-                      </div>
-                      <div className="logo-wrapper">
-                        <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/agent-long-and-foster-91466736de5f19bfd684587d1de75f4e.png" alt="logo" />
-                      </div>
-                      <div className="logo-wrapper">
-                        <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/agent-exp-0934e00c3575df80f9566de2751b9ddd.png" alt="logo" />
-                      </div>
-                      <div className="logo-wrapper">
-                        <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/agent-sothebys-4fdf1a7f3ebab8f0fa41fc584a7fcfa3.png" alt="logo" />
-                      </div>
-                      <div className="logo-wrapper">
-                        <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/agent-prudential-85ab4b32f9130dc61ba608a72438005b.png" alt="logo" />
-                      </div>
-                      <div className="logo-wrapper">
-                        <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/agent-realty-one-fc1daee8c565c004f1c2c6bf58918931.png" alt="logo" />
-                      </div>
+                  </div>
+                  <div className="logos">
+                    <div className="logo-wrapper">
+                      <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/agent-weichert-c731d7b67939d0076e03e765ededd1b1.png" alt="logo" />
+                    </div>
+                    <div className="logo-wrapper">
+                      <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/agent-long-and-foster-91466736de5f19bfd684587d1de75f4e.png" alt="logo" />
+                    </div>
+                    <div className="logo-wrapper">
+                      <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/agent-exp-0934e00c3575df80f9566de2751b9ddd.png" alt="logo" />
+                    </div>
+                    <div className="logo-wrapper">
+                      <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/agent-sothebys-4fdf1a7f3ebab8f0fa41fc584a7fcfa3.png" alt="logo" />
+                    </div>
+                    <div className="logo-wrapper">
+                      <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/agent-prudential-85ab4b32f9130dc61ba608a72438005b.png" alt="logo" />
+                    </div>
+                    <div className="logo-wrapper">
+                      <img src="//d1xt9s86fx9r45.cloudfront.net/assets/hl-production/packs/media/images/productsLandingPages/simpleSale/agent-realty-one-fc1daee8c565c004f1c2c6bf58918931.png" alt="logo" />
                     </div>
                   </div>
                 </div>

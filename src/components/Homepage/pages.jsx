@@ -11,6 +11,7 @@ import ClientTestimonial from '../clientTestimonial/ClientTestimonial';
 import Comparison from '../comparison/Comparison';
 import RecentlySold from '../recentlySold/RecentlySold';
 import ClientFAQs from '../clientFAQs/clientFAQs';
+import Notification from '../notification/notification';
 
 const HomePage = () => {
 
@@ -27,6 +28,7 @@ const HomePage = () => {
       <Comparison />
       <RecentlySold />
       <ClientFAQs />
+      <Notification />
       <Footer />
       
     </div>

@@ -7,12 +7,14 @@
 .section-area__container {
   max-width: 1200px;
   margin: 0 auto;
+  background-color: #fff;
 }
 
 .how-it-works-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: #fff;
 }
 
 /* Header Section */
@@ -79,7 +81,7 @@
   align-items: flex-start;
   gap: 24px;
   padding: 30px;
-  background-color: #f8f9fa;
+  background-color: #fff;
   border-radius: 12px;
   width: 100%;
   max-width: 600px;
@@ -168,7 +170,7 @@
 /* Split Step (Investors vs Agents) */
 .split-step {
   width: 100%;
-  max-width: 1000px;
+  max-width: 1440px;
 }
 
 .split-wrapper {
@@ -302,14 +304,14 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #46B6FF 0%, #0080E5 100%);
+  background-color: #f1b707;
   color: white;
   font-size: 18px;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(70, 182, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(241, 183, 7, 0.3);
 }
 
 /* Split Wrapper */
@@ -322,25 +324,13 @@
 
 /* VS Section */
 .vs-section {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.vs-box {
   background-color: #fff;
   border: 2px solid #e0e0e0;
   border-radius: 16px;
   padding: 32px;
-  transition: all 0.3s ease;
-  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 24px;
-}
-
-.vs-box:hover {
-  box-shadow: 0 8px 24px rgba(70, 182, 255, 0.15);
 }
 
 .vs-section .text-wrapper h3 {
@@ -361,25 +351,15 @@
 .logos {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: 20px;
 }
 
 .logo-wrapper {
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  height: 80px;
-}
-
-.logo-wrapper:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
-  border-color: #46B6FF;
+  padding: 16px;
+  height: 100px;
 }
 
 .logo-wrapper img {
@@ -481,7 +461,7 @@
     font-size: 14px;
   }
 
-  .vs-box {
+  .vs-section {
     padding: 24px;
   }
 }
@@ -574,7 +554,7 @@
     font-size: 14px;
   }
 
-  .vs-box {
+  .vs-section {
     padding: 20px;
     gap: 20px;
   }
@@ -649,7 +629,7 @@
     font-size: 13px;
   }
 
-  .vs-box {
+  .vs-section {
     padding: 18px;
   }
 
