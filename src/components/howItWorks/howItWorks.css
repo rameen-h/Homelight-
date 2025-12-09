@@ -524,12 +524,18 @@
     max-width: 100%;
     width: 100%;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .step-wrapper {
     width: 100%;
     max-width: 100%;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .investors-vs-agents-step {
@@ -537,6 +543,22 @@
     max-width: 100%;
     padding: 0;
     overflow-x: hidden;
+  }
+
+  /* Hide desktop lines on iPhone */
+  .line-top {
+    display: none;
+  }
+
+  /* Show mobile lines on iPhone */
+  .line-top-mobile {
+    display: block;
+    margin: 20px 0;
+  }
+
+  /* Hide split wrapper (curved lines) on iPhone */
+  .split-wrapper {
+    display: none;
   }
 
   .heading {
@@ -605,35 +627,42 @@
   /* Investors vs Agents styling */
   .investors-vs-agents-title {
     flex-direction: column;
-    gap: 16px;
-    margin-bottom: 30px;
+    gap: 20px;
+    margin-bottom: 35px;
+    padding: 0 8px;
   }
 
   .vs-title {
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 700;
+    text-align: center;
   }
 
   .vs-circle {
-    width: 50px;
-    height: 50px;
-    font-size: 16px;
+    width: 55px;
+    height: 55px;
+    font-size: 18px;
     transform: rotate(90deg);
+    flex-shrink: 0;
   }
 
   .step-split-wrapper {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 45px;
     max-width: 100%;
     width: 100%;
+    padding: 0 8px;
   }
 
   .vs-section {
-    padding: 24px 16px;
-    gap: 16px;
+    padding: 28px 20px;
+    gap: 20px;
     max-width: 100%;
     width: 100%;
     box-sizing: border-box;
+    border-radius: 16px;
+    background-color: #fff;
+    border: 2px solid #e0e0e0;
   }
 
   .vs-section .text-wrapper {
@@ -642,31 +671,40 @@
   }
 
   .vs-section .text-wrapper h3 {
-    font-size: 20px;
-    margin-bottom: 12px;
+    font-size: 22px;
+    margin-bottom: 14px;
     line-height: 1.3;
+    text-align: center;
   }
 
   .vs-description {
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: 15px;
+    line-height: 1.7;
+    text-align: center;
   }
 
   .logos {
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    gap: 16px;
     width: 100%;
+    margin-top: 20px;
   }
 
   .logo-wrapper {
-    height: 60px;
-    padding: 8px;
+    height: 70px;
+    padding: 10px;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fafafa;
+    border-radius: 8px;
   }
 
   .logo-wrapper img {
-    max-width: 100%;
-    max-height: 100%;
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
   }
 }
 
@@ -716,34 +754,48 @@
     font-size: 13px;
   }
 
+  .investors-vs-agents-title {
+    gap: 18px;
+    margin-bottom: 30px;
+  }
+
   .vs-title {
-    font-size: 20px;
+    font-size: 21px;
   }
 
   .vs-circle {
-    width: 46px;
-    height: 46px;
-    font-size: 15px;
+    width: 50px;
+    height: 50px;
+    font-size: 16px;
   }
 
   .step-split-wrapper {
-    gap: 35px;
+    gap: 40px;
+    padding: 0 6px;
   }
 
   .vs-section {
-    padding: 20px 14px;
+    padding: 24px 18px;
+    gap: 18px;
   }
 
   .vs-section .text-wrapper h3 {
-    font-size: 18px;
+    font-size: 20px;
+    margin-bottom: 12px;
   }
 
   .vs-description {
-    font-size: 13px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .logos {
+    gap: 14px;
+    margin-top: 18px;
   }
 
   .logo-wrapper {
-    height: 55px;
-    padding: 6px;
+    height: 65px;
+    padding: 8px;
   }
 }
