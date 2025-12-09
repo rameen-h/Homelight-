@@ -523,7 +523,7 @@
     overflow-x: hidden;
     max-width: 100%;
     width: 100%;
-    padding: 0;
+    padding: 0 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -536,6 +536,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 0;
   }
 
   .investors-vs-agents-step {
@@ -553,7 +554,8 @@
   /* Show mobile lines on iPhone */
   .line-top-mobile {
     display: block;
-    margin: 20px 0;
+    margin: 20px auto;
+    width: 32px;
   }
 
   /* Hide split wrapper (curved lines) on iPhone */
@@ -588,40 +590,49 @@
   }
 
   .process-step__step {
-    padding: 20px 16px;
+    flex-direction: column;
+    text-align: center;
+    padding: 24px 20px;
     gap: 16px;
-    max-width: 100%;
-    width: 100%;
+    max-width: 90%;
+    width: 90%;
     box-sizing: border-box;
+    margin: 0 auto;
   }
 
   .step-number {
-    width: 32px;
-    height: 32px;
-    font-size: 14px;
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
     flex-shrink: 0;
+    margin: 12px auto 16px;
   }
 
   .process-step__step .icon {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     flex-shrink: 0;
+    margin: 0 auto 12px;
   }
 
   .process-step__step .desc {
     flex: 1;
     min-width: 0;
+    width: 100%;
+    text-align: center;
   }
 
   .process-step__step .desc h3 {
-    font-size: 17px;
-    margin-bottom: 8px;
+    font-size: 18px;
+    margin-bottom: 10px;
     line-height: 1.4;
+    text-align: center;
   }
 
   .process-step__step .desc p {
-    font-size: 14px;
-    line-height: 1.5;
+    font-size: 15px;
+    line-height: 1.6;
+    text-align: center;
   }
 
   /* Investors vs Agents styling */
@@ -647,63 +658,72 @@
   }
 
   .step-split-wrapper {
-    grid-template-columns: 1fr;
-    gap: 45px;
-    max-width: 100%;
-    width: 100%;
-    padding: 0 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    max-width: 95%;
+    width: 95%;
+    padding: 0;
+    margin: 0 auto;
   }
 
   .vs-section {
-    padding: 28px 20px;
-    gap: 20px;
+    padding: 24px 12px;
+    gap: 16px;
     max-width: 100%;
     width: 100%;
+    min-height: 480px;
     box-sizing: border-box;
-    border-radius: 16px;
+    border-radius: 12px;
     background-color: #fff;
     border: 2px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
   }
 
   .vs-section .text-wrapper {
     min-height: auto;
     width: 100%;
+    flex: 0 0 auto;
   }
 
   .vs-section .text-wrapper h3 {
-    font-size: 22px;
-    margin-bottom: 14px;
+    font-size: 16px;
+    margin-bottom: 12px;
     line-height: 1.3;
     text-align: center;
+    font-weight: 700;
   }
 
   .vs-description {
-    font-size: 15px;
-    line-height: 1.7;
+    font-size: 13px;
+    line-height: 1.6;
     text-align: center;
   }
 
   .logos {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 16px;
+    flex: 1;
   }
 
   .logo-wrapper {
-    height: 70px;
-    padding: 10px;
+    height: 50px;
+    padding: 8px;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: #fafafa;
-    border-radius: 8px;
+    border-radius: 6px;
   }
 
   .logo-wrapper img {
-    max-width: 90%;
-    max-height: 90%;
+    max-width: 85%;
+    max-height: 85%;
     object-fit: contain;
   }
 }
@@ -731,27 +751,32 @@
   }
 
   .process-step__step {
-    padding: 18px 14px;
+    padding: 20px 16px;
     gap: 14px;
+    max-width: 92%;
+    width: 92%;
   }
 
   .step-number {
-    width: 28px;
-    height: 28px;
-    font-size: 13px;
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
   }
 
   .process-step__step .icon {
-    width: 44px;
-    height: 44px;
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 10px;
   }
 
   .process-step__step .desc h3 {
-    font-size: 16px;
+    font-size: 17px;
+    text-align: center;
   }
 
   .process-step__step .desc p {
-    font-size: 13px;
+    font-size: 14px;
+    text-align: center;
   }
 
   .investors-vs-agents-title {
@@ -770,32 +795,41 @@
   }
 
   .step-split-wrapper {
-    gap: 40px;
-    padding: 0 6px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 0;
+    max-width: 96%;
+    width: 96%;
   }
 
   .vs-section {
-    padding: 24px 18px;
-    gap: 18px;
+    padding: 20px 10px;
+    gap: 14px;
+    min-height: 460px;
   }
 
   .vs-section .text-wrapper h3 {
-    font-size: 20px;
-    margin-bottom: 12px;
+    font-size: 15px;
+    margin-bottom: 10px;
+    text-align: center;
   }
 
   .vs-description {
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: center;
   }
 
   .logos {
-    gap: 14px;
-    margin-top: 18px;
+    gap: 8px;
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
   }
 
   .logo-wrapper {
-    height: 65px;
-    padding: 8px;
+    height: 45px;
+    padding: 6px;
   }
 }
