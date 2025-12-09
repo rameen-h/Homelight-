@@ -46,6 +46,10 @@ const Search = () => {
         types: "address",
         marker: false,
         flyTo: false,
+        render: function(item) {
+          const placeName = item.place_name.replace(/, United States$/, '');
+          return `<div class='mapboxgl-ctrl-geocoder--suggestion'><div class='mapboxgl-ctrl-geocoder--suggestion-title'>${placeName}</div></div>`;
+        }
       });
       searchGeocoderRef.current = geocoder;
 
@@ -58,10 +62,6 @@ const Search = () => {
         );
       }
 
-      geocoder.on("result", (e) => {
-        console.log("Selected address:", e.result);
-      });
-
       if (searchGeocoderContainerRef.current && searchGeocoderContainerRef.current.childNodes.length === 0) {
         geocoder.addTo(searchGeocoderContainerRef.current);
 
@@ -69,6 +69,72 @@ const Search = () => {
         searchGeocoderInputRef.current =
           searchGeocoderContainerRef.current.querySelector("input.mapboxgl-ctrl-geocoder--input");
       }
+
+      geocoder.on("result", (e) => {
+        console.log("Selected address:", e.result);
+        // Remove "United States" from the input field after selection
+        setTimeout(() => {
+          const inputElement = searchGeocoderInputRef.current ||
+            searchGeocoderContainerRef.current?.querySelector("input.mapboxgl-ctrl-geocoder--input");
+          if (inputElement) {
+            const currentValue = inputElement.value;
+            inputElement.value = currentValue.replace(/, United States$/, '');
+          }
+        }, 0);
+      });
+
+      // Remove active state from first suggestion when results appear
+      geocoder.on("results", () => {
+        // Run immediately
+        if (searchGeocoderContainerRef.current) {
+          const removeActiveStyles = () => {
+            // Target both old and new mapbox autocomplete structures
+            const allSuggestions = searchGeocoderContainerRef.current.querySelectorAll(".mapboxgl-ctrl-geocoder--suggestion");
+            allSuggestions.forEach((suggestion) => {
+              suggestion.classList.remove("active");
+              suggestion.removeAttribute("aria-selected");
+              suggestion.style.backgroundColor = "#ffffff";
+              suggestion.style.background = "#ffffff";
+              suggestion.style.border = "none";
+              suggestion.style.boxShadow = "none";
+              suggestion.style.outline = "none";
+            });
+
+            // Remove active class from old suggestions structure
+            const allListItems = searchGeocoderContainerRef.current.querySelectorAll(".suggestions li");
+            allListItems.forEach((li) => {
+              li.classList.remove("active");
+              li.style.backgroundColor = "#ffffff";
+              li.style.background = "#ffffff";
+              li.style.border = "none";
+              li.style.boxShadow = "none";
+              li.style.outline = "none";
+              li.style.margin = "0";
+              li.style.padding = "12px 16px";
+              li.style.borderBottom = "1px solid #f0f0f0";
+            });
+
+            // Remove active class from new mapbox-place-autocomplete structure
+            const placeAutocomplete = document.querySelectorAll(".mapbox-place-autocomplete ul li");
+            placeAutocomplete.forEach((li) => {
+              li.classList.remove("active");
+              li.removeAttribute("aria-selected");
+              li.style.backgroundColor = "#ffffff";
+              li.style.background = "#ffffff";
+              li.style.border = "none";
+              li.style.boxShadow = "none";
+              li.style.outline = "none";
+              li.style.margin = "0";
+              li.style.padding = "12px 16px";
+              li.style.borderBottom = "1px solid #f0f0f0";
+            });
+          };
+
+          removeActiveStyles();
+          // Also run after a short delay in case Mapbox re-applies styles
+          setTimeout(removeActiveStyles, 10);
+        }
+      });
     };
 
     const handleOutside = (evt) => {

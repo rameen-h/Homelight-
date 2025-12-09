@@ -152,16 +152,75 @@
   display: none !important;
 }
 
+/* Suggestions dropdown container for mapbox-place-autocomplete */
+.mapbox-place-autocomplete ul {
+  position: absolute !important;
+  top: calc(100% + 1px) !important;
+  left: -1px !important;
+  right: -200px !important;
+  width: calc((100% + 245px) * 0.955) !important;
+  background: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+  border: 1px solid #cfcfcf !important;
+  border-radius: 8px !important;
+  max-height: 320px;
+  overflow-y: auto;
+  z-index: 999999 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+/* Individual suggestion list items */
+.mapbox-place-autocomplete ul li {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 12px 15px !important;
+  background: #ffffff !important;
+  border: none !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+  color: #333 !important;
+  cursor: pointer !important;
+  font-weight: 400 !important;
+  font-size: 0.95rem !important;
+  line-height: 1.4 !important;
+  transition: background-color 0.15s ease !important;
+}
+
+/* Remove border from last item */
+.mapbox-place-autocomplete ul li:last-child {
+  border-bottom: none !important;
+}
+
+/* Light grey background on hover - including all child elements */
+.mapbox-place-autocomplete ul li:hover,
+.mapbox-place-autocomplete ul li:hover * {
+  background: #f5f5f5 !important;
+}
+
+/* Keep white background for active/selected states */
+.mapbox-place-autocomplete ul li.active,
+.mapbox-place-autocomplete ul li:focus,
+.mapbox-place-autocomplete ul li[aria-selected="true"],
+.mapbox-place-autocomplete ul li.active *,
+.mapbox-place-autocomplete ul li:focus *,
+.mapbox-place-autocomplete ul li[aria-selected="true"] * {
+  background: #ffffff !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Legacy mapbox geocoder suggestions styling for backwards compatibility */
 #hero-input .suggestions {
   position: absolute !important;
   top: calc(100% + 1px) !important;
   left: -1px !important;
   right: -200px !important;
-  width: calc(100% + 245px) !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-  border-radius: 0 !important;
+  width: calc((100% + 245px) * 0.94) !important;
+  background: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+  border: 1px solid #cfcfcf !important;
+  border-radius: 8px !important;
   max-height: 320px;
   overflow-y: auto;
   z-index: 999999 !important;
@@ -173,22 +232,33 @@
 #hero-input .suggestions li {
   list-style: none !important;
   margin: 0 !important;
-  padding: 0 !important;
-  background: transparent !important;
+  padding: 12px 15px !important;
+  background: #ffffff !important;
   border: none !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+  color: #333 !important;
+  cursor: pointer !important;
+  font-weight: 400 !important;
+  font-size: 0.95rem !important;
+  line-height: 1.4 !important;
+  transition: background-color 0.15s ease !important;
 }
 
-/* Base suggestion styling - white background, no borders */
+/* Remove border from last suggestion */
+#hero-input .suggestions li:last-child {
+  border-bottom: none !important;
+}
+
+/* Base suggestion styling - white background */
 #hero-input .mapboxgl-ctrl-geocoder--suggestion {
   display: block !important;
-  padding: 8px 15px !important;
-  background: #ffffff !important;
+  padding: 0 !important;
+  background: transparent !important;
   color: #333 !important;
   border: none !important;
   cursor: pointer !important;
   font-weight: 400 !important;
   font-size: 0.95rem !important;
-  transition: background-color 0.15s ease !important;
   outline: none !important;
   box-shadow: none !important;
 }
@@ -206,14 +276,15 @@
 #hero-input .mapboxgl-ctrl-geocoder--suggestion[aria-selected="true"],
 #hero-input .suggestions li.active,
 #hero-input .suggestions li.active > .mapboxgl-ctrl-geocoder--suggestion {
-  background: #ffffff !important;
+  background: transparent !important;
   outline: none !important;
   box-shadow: none !important;
   border: none !important;
 }
 
-/* Light grey background ONLY on hover */
-#hero-input .mapboxgl-ctrl-geocoder--suggestion:hover {
+/* Light grey background ONLY on hover - applied to li and all child elements */
+#hero-input .suggestions li:hover,
+#hero-input .suggestions li:hover * {
   background: #f5f5f5 !important;
 }
 
@@ -345,7 +416,8 @@
     font-size: 1rem;
   }
 
-  #hero-input .suggestions {
+  #hero-input .suggestions,
+  .mapbox-place-autocomplete ul {
     left: 0 !important;
     right: 0 !important;
     width: 100% !important;
