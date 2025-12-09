@@ -116,6 +116,7 @@
 /* Split step styling */
 .split-step {
   gap: 20px;
+  overflow-x: hidden;
 }
 
 .split-step .step-number {
@@ -279,7 +280,7 @@
 
 /* Investors vs Agents Section */
 .investors-vs-agents-step {
-  width: 130%;
+  width: 100%;
   max-width: 1400px;
 }
 
@@ -389,6 +390,11 @@
 
 /* Responsive Design */
 @media (max-width: 968px) {
+  .investors-vs-agents-step {
+    width: 100%;
+    padding: 0 10px;
+  }
+
   .step-split-wrapper {
     grid-template-columns: 1fr;
     gap: 60px;
@@ -503,6 +509,24 @@
 @media only screen and (max-width: 430px) {
   .how-it-works-simple-sale-compare {
     padding: 35px 12px;
+    overflow-x: hidden;
+  }
+
+  .how-it-works-container {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
+  .how-it-works-container__process-step {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
+  .investors-vs-agents-step {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 5px;
+    overflow-x: hidden;
   }
 
   .heading {
@@ -567,6 +591,11 @@
   .vs-section {
     padding: 20px;
     gap: 20px;
+    max-width: 100%;
+  }
+
+  .vs-section .text-wrapper {
+    min-height: auto;
   }
 
   .vs-section .text-wrapper h3 {
@@ -585,6 +614,11 @@
 
   .step-split-wrapper {
     gap: 35px;
+    max-width: 100%;
+  }
+
+  .process-step__step {
+    max-width: 100%;
   }
 }
 

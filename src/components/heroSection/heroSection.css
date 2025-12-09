@@ -333,6 +333,7 @@
     flex-direction: column;
     padding: 1rem;
     min-height: auto;
+    overflow-x: hidden;
   }
 
   .promo-section__content {
@@ -340,7 +341,9 @@
     max-width: 100%;
     text-align: center;
     margin-bottom: 1.25rem;
-    margin-left: 0.25%;
+    margin-left: 0;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
   .promo-section__wrapper picture {
@@ -348,13 +351,18 @@
     max-width: 100%;
     transform: translateX(0);
     padding-top: 1rem;
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .promo-section__wrapper img {
     max-width: 100%;
   }
 
-  .autocomplete-wrapper { max-width: 100%; }
+  .autocomplete-wrapper {
+    max-width: 100%;
+    width: 100%;
+  }
 
   .autocomplete-box.geocoder-control { padding-right: 140px; }
 
@@ -366,26 +374,42 @@
 /* iPhone specific styles */
 @media only screen and (max-width: 430px) {
   .promo-section__wrapper {
-    padding: 0.75rem;
-    padding-top: 2rem;
+    padding: 0;
+    padding-top: 80px;
     min-height: auto;
+    overflow-x: hidden;
+    max-width: 100vw;
+    flex-direction: column;
+    gap: 0;
   }
 
   .promo-section__content {
-    margin-left: 0;
-    padding: 0 0.5rem;
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 1.5rem 1rem;
+    transform: none;
+    order: 1;
   }
 
   .title {
     font-size: 1.75rem;
-    line-height: 1.2;
+    line-height: 1.3;
     margin-bottom: 0.75rem;
+    text-align: center;
   }
 
   .description {
     font-size: 1rem;
-    line-height: 1.4;
-    margin-bottom: 1rem;
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+    text-align: center;
+  }
+
+  .cta-wrap {
+    width: 100%;
+    max-width: 100%;
   }
 
   .autocomplete-wrapper {
@@ -395,24 +419,33 @@
 
   .autocomplete-box.geocoder-control {
     padding-right: 0;
+    display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  #hero-input .mapboxgl-ctrl-geocoder {
+    width: 100%;
   }
 
   #hero-input input.mapboxgl-ctrl-geocoder--input {
-    height: 48px;
+    height: 50px;
     font-size: 0.95rem;
-    padding: 0 12px 0 50px;
+    padding: 0 15px 0 40px;
+    background-size: 18px;
+    background-position: 12px center;
+    width: 100%;
   }
 
   .autocomplete-box.geocoder-control .btn-primary {
-    position: relative;
+    position: static;
     width: 100%;
-    height: 48px;
+    height: 50px;
     transform: none;
-    top: 0;
-    right: 0;
-    margin-top: 0.5rem;
+    top: auto;
+    right: auto;
+    margin: 0;
     font-size: 1rem;
   }
 
@@ -425,12 +458,19 @@
   }
 
   .promo-section__wrapper picture {
-    transform: translateX(0);
-    padding-top: 1rem;
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 100%;
+    transform: none;
+    padding: 0 1rem 1.5rem;
+    order: 2;
   }
 
   .promo-section__wrapper img {
-    max-height: 300px;
+    max-height: 280px;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
   }
 }
 
@@ -443,10 +483,23 @@
   .description {
     font-size: 1.1rem;
   }
+
+  #hero-input input.mapboxgl-ctrl-geocoder--input,
+  .autocomplete-box.geocoder-control .btn-primary {
+    height: 52px;
+  }
 }
 
 /* Smaller iPhones (SE, Mini) */
 @media only screen and (max-width: 375px) {
+  .promo-section__wrapper {
+    padding-top: 70px;
+  }
+
+  .promo-section__content {
+    padding: 1.25rem 0.75rem;
+  }
+
   .title {
     font-size: 1.5rem;
   }
@@ -456,12 +509,22 @@
   }
 
   #hero-input input.mapboxgl-ctrl-geocoder--input {
-    height: 44px;
+    height: 46px;
     font-size: 0.9rem;
+    padding: 0 12px 0 36px;
+    background-size: 16px;
   }
 
   .autocomplete-box.geocoder-control .btn-primary {
-    height: 44px;
+    height: 46px;
     font-size: 0.95rem;
+  }
+
+  .promo-section__wrapper picture {
+    padding: 0 0.75rem 1.25rem;
+  }
+
+  .promo-section__wrapper img {
+    max-height: 240px;
   }
 }

@@ -321,24 +321,33 @@
 /* ===== iPhone Specific Styles ===== */
 @media only screen and (max-width: 430px) {
   .simple-sale-blue-ribbon {
-    padding-top: 30px;
-    padding-bottom: 30px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 
   .simple-sale-blue-ribbon__content {
-    padding: 0 15px;
+    padding: 0 1rem;
+    max-width: 100%;
   }
 
   .simple-sale-blue-ribbon__header-text {
-    font-size: 1rem;
-    margin-bottom: 15px;
+    font-size: 1.05rem;
+    margin-bottom: 1.25rem;
+    line-height: 1.4;
+  }
+
+  .simple-sale-blue-ribbon__cta-wrap {
+    width: 100%;
   }
 
   .ss-cta-area {
-    width: 90vw;
+    width: 100%;
+    max-width: 100%;
     flex-direction: column;
-    gap: 8px;
-    padding: 8px;
+    gap: 0.75rem;
+    padding: 0.75rem;
   }
 
   .ss-address-wrap {
@@ -346,29 +355,38 @@
     width: 100%;
   }
 
+  .ss-geocoder-control {
+    width: 100%;
+  }
+
+  .ss-geocoder-control .mapboxgl-ctrl-geocoder {
+    width: 100%;
+  }
+
   .ss-geocoder-control .mapboxgl-ctrl-geocoder--input {
     min-width: 100% !important;
     width: 100% !important;
-    padding: 12px 40px 12px 40px;
+    padding: 12px 40px;
     font-size: 0.95rem;
-    height: 48px;
+    height: 50px;
   }
 
   .ss-button.ss-explore-btn {
     width: 100%;
     padding: 12px 16px;
     font-size: 0.95rem;
-    height: 48px;
+    height: 50px;
   }
 
   .ss-geocoder-control .suggestions-wrapper {
-    width: 90vw;
-    left: 0;
+    width: calc(100% - 1.5rem);
+    left: 0.75rem;
   }
 
   .ss-geocoder-control .suggestions,
   .ss-geocoder-control .mapbox-place-autocomplete ul {
     max-height: 250px;
+    width: 100%;
   }
 
   .ss-geocoder-control .suggestions li,
@@ -391,25 +409,34 @@
 
 /* Smaller iPhones (SE, Mini) */
 @media only screen and (max-width: 375px) {
+  .simple-sale-blue-ribbon {
+    padding-top: 35px;
+    padding-bottom: 35px;
+  }
+
+  .simple-sale-blue-ribbon__content {
+    padding: 0 0.75rem;
+  }
+
   .simple-sale-blue-ribbon__header-text {
     font-size: 0.95rem;
   }
 
   .ss-cta-area {
-    width: 95vw;
-    padding: 6px;
+    width: 100%;
+    padding: 0.6rem;
   }
 
   .ss-geocoder-control .mapboxgl-ctrl-geocoder--input {
-    padding: 10px 35px 10px 35px;
-    font-size: 0.85rem;
-    height: 44px;
+    padding: 10px 36px;
+    font-size: 0.9rem;
+    height: 46px;
   }
 
   .ss-button.ss-explore-btn {
     padding: 10px 14px;
     font-size: 0.9rem;
-    height: 44px;
+    height: 46px;
   }
 
   .ss-geocoder-control .suggestions li,

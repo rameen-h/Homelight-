@@ -141,3 +141,71 @@
     font-size: 10px;
   }
 }
+
+/* iPhone specific styles */
+@media only screen and (max-width: 430px) {
+  .proof.unfixed {
+    bottom: 60px;
+    right: 12px;
+    left: 12px;
+    min-width: auto;
+    max-width: calc(100vw - 24px);
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .proof-image .icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .sale-sign-icon {
+    width: 17px;
+    height: 18px;
+  }
+
+  .client-details {
+    font-size: 12px;
+  }
+
+  .client-action {
+    font-size: 11px;
+  }
+
+  .time {
+    font-size: 10px;
+  }
+}
+
+/* Smaller iPhones (SE, Mini) */
+@media only screen and (max-width: 375px) {
+  .proof.unfixed {
+    bottom: 50px;
+    right: 10px;
+    left: 10px;
+    max-width: calc(100vw - 20px);
+    padding: 10px 12px;
+  }
+
+  .proof-image .icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .sale-sign-icon {
+    width: 15px;
+    height: 16px;
+  }
+
+  .client-details {
+    font-size: 11px;
+  }
+
+  .client-action {
+    font-size: 10px;
+  }
+
+  .time {
+    font-size: 9px;
+  }
+}
