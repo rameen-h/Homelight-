@@ -1,9 +1,15 @@
+/* Full-width background wrapper */
+.testimonials-background {
+  width: 100%;
+  background-color: #f2f8fe;
+}
+
 /* Testimonial Section Container */
 .section-area__container.testimonials {
   max-width: 1200px;
+  background-color: #f2f8fe;
   margin: 0 auto;
   padding: 80px 20px;
-  background-color: #F0F7FF;
 }
 
 /* Section Title */
