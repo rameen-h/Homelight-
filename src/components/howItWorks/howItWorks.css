@@ -508,39 +508,51 @@
 /* iPhone specific styles */
 @media only screen and (max-width: 430px) {
   .how-it-works-simple-sale-compare {
-    padding: 35px 12px;
+    padding: 40px 16px;
     overflow-x: hidden;
+    max-width: 100vw;
   }
 
   .how-it-works-container {
     overflow-x: hidden;
     max-width: 100%;
+    width: 100%;
   }
 
   .how-it-works-container__process-step {
     overflow-x: hidden;
     max-width: 100%;
+    width: 100%;
+    padding: 0;
+  }
+
+  .step-wrapper {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
   }
 
   .investors-vs-agents-step {
     width: 100%;
     max-width: 100%;
-    padding: 0 5px;
+    padding: 0;
     overflow-x: hidden;
   }
 
   .heading {
-    margin-bottom: 50px;
+    margin-bottom: 40px;
+    padding: 0 4px;
   }
 
   .section__title {
     font-size: 12px;
     letter-spacing: 1.2px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
 
   .section__description {
-    font-size: 22px;
+    font-size: 24px;
+    line-height: 1.3;
   }
 
   .section__description sup {
@@ -549,87 +561,127 @@
 
   .how-it-works-container__detailed_description {
     font-size: 15px;
-    line-height: 1.5;
+    line-height: 1.6;
+    padding: 0 8px;
   }
 
   .process-step__step {
-    padding: 20px;
-    gap: 18px;
+    padding: 20px 16px;
+    gap: 16px;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .step-number {
-    width: 26px;
-    height: 26px;
-    font-size: 13px;
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+    flex-shrink: 0;
   }
 
   .process-step__step .icon {
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+  }
+
+  .process-step__step .desc {
+    flex: 1;
+    min-width: 0;
   }
 
   .process-step__step .desc h3 {
     font-size: 17px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    line-height: 1.4;
   }
 
   .process-step__step .desc p {
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.5;
   }
 
+  /* Investors vs Agents styling */
+  .investors-vs-agents-title {
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+
   .vs-title {
-    font-size: 18px;
+    font-size: 22px;
+    font-weight: 700;
   }
 
   .vs-circle {
-    width: 45px;
-    height: 45px;
-    font-size: 14px;
+    width: 50px;
+    height: 50px;
+    font-size: 16px;
+    transform: rotate(90deg);
+  }
+
+  .step-split-wrapper {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    max-width: 100%;
+    width: 100%;
   }
 
   .vs-section {
-    padding: 20px;
-    gap: 20px;
+    padding: 24px 16px;
+    gap: 16px;
     max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .vs-section .text-wrapper {
     min-height: auto;
+    width: 100%;
   }
 
   .vs-section .text-wrapper h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
+    font-size: 20px;
+    margin-bottom: 12px;
+    line-height: 1.3;
   }
 
   .vs-description {
-    font-size: 13px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .logos {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    width: 100%;
   }
 
   .logo-wrapper {
-    height: 65px;
-    padding: 14px;
+    height: 60px;
+    padding: 8px;
+    width: 100%;
   }
 
-  .step-split-wrapper {
-    gap: 35px;
+  .logo-wrapper img {
     max-width: 100%;
-  }
-
-  .process-step__step {
-    max-width: 100%;
+    max-height: 100%;
   }
 }
 
 /* Smaller iPhones (SE, Mini) */
 @media only screen and (max-width: 375px) {
   .how-it-works-simple-sale-compare {
-    padding: 30px 10px;
+    padding: 35px 12px;
+  }
+
+  .heading {
+    margin-bottom: 35px;
   }
 
   .section__description {
-    font-size: 20px;
+    font-size: 22px;
   }
 
   .section__description sup {
@@ -641,18 +693,19 @@
   }
 
   .process-step__step {
-    padding: 18px;
+    padding: 18px 14px;
+    gap: 14px;
   }
 
   .step-number {
-    width: 24px;
-    height: 24px;
-    font-size: 12px;
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
   }
 
   .process-step__step .icon {
-    width: 45px;
-    height: 45px;
+    width: 44px;
+    height: 44px;
   }
 
   .process-step__step .desc h3 {
@@ -660,33 +713,37 @@
   }
 
   .process-step__step .desc p {
-    font-size: 12px;
-  }
-
-  .vs-title {
-    font-size: 16px;
-  }
-
-  .vs-circle {
-    width: 40px;
-    height: 40px;
     font-size: 13px;
   }
 
+  .vs-title {
+    font-size: 20px;
+  }
+
+  .vs-circle {
+    width: 46px;
+    height: 46px;
+    font-size: 15px;
+  }
+
+  .step-split-wrapper {
+    gap: 35px;
+  }
+
   .vs-section {
-    padding: 18px;
+    padding: 20px 14px;
   }
 
   .vs-section .text-wrapper h3 {
-    font-size: 17px;
+    font-size: 18px;
   }
 
   .vs-description {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .logo-wrapper {
-    height: 60px;
-    padding: 12px;
+    height: 55px;
+    padding: 6px;
   }
 }
