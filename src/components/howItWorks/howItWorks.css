@@ -575,9 +575,35 @@
     opacity: 1 !important;
   }
 
-  /* Hide split wrapper (curved lines) on iPhone */
+  /* Show split wrapper (curved lines) on iPhone */
   .split-wrapper {
-    display: none;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 0 0 30px 0;
+    position: relative;
+    width: 100%;
+    height: 90px;
+    gap: 0;
+  }
+
+  .split-path {
+    flex-shrink: 0;
+    width: 180px;
+    height: 90px;
+    position: absolute;
+  }
+
+  .split-path-left {
+    transform: scale(-1, -1);
+    left: 50%;
+    margin-left: -180px;
+  }
+
+  .split-path-right {
+    transform: scaleY(-1);
+    right: 50%;
+    margin-right: -180px;
   }
 
   .heading {
@@ -664,22 +690,24 @@
 
   /* Investors vs Agents styling */
   .investors-vs-agents-title {
-    flex-direction: column;
-    gap: 20px;
+    flex-direction: row;
+    gap: 16px;
     margin-bottom: 35px;
     padding: 0 8px;
+    justify-content: center;
+    align-items: center;
   }
 
   .vs-title {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
     text-align: center;
   }
 
   .vs-circle {
-    width: 55px;
-    height: 55px;
-    font-size: 18px;
+    width: 50px;
+    height: 50px;
+    font-size: 16px;
     transform: none;
     flex-shrink: 0;
   }
@@ -778,6 +806,37 @@
     z-index: 1;
   }
 
+  /* Show split wrapper (curved lines) on smaller iPhone */
+  .split-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 0 0 25px 0;
+    position: relative;
+    width: 100%;
+    height: 80px;
+    gap: 0;
+  }
+
+  .split-path {
+    flex-shrink: 0;
+    width: 150px;
+    height: 80px;
+    position: absolute;
+  }
+
+  .split-path-left {
+    transform: scale(-1, -1);
+    left: 50%;
+    margin-left: -150px;
+  }
+
+  .split-path-right {
+    transform: scaleY(-1);
+    right: 50%;
+    margin-right: -150px;
+  }
+
   .section__description {
     font-size: 22px;
   }
@@ -830,18 +889,21 @@
   }
 
   .investors-vs-agents-title {
-    gap: 18px;
+    flex-direction: row;
+    gap: 12px;
     margin-bottom: 30px;
+    justify-content: center;
+    align-items: center;
   }
 
   .vs-title {
-    font-size: 21px;
+    font-size: 18px;
   }
 
   .vs-circle {
-    width: 50px;
-    height: 50px;
-    font-size: 16px;
+    width: 45px;
+    height: 45px;
+    font-size: 14px;
     transform: none;
   }
 
