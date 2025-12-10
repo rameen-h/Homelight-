@@ -469,7 +469,7 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
     background: #ffffff !important;
     border: 1px solid #cfcfcf !important;
-    z-index: 9999 !important;
+    z-index: 999999 !important;
   }
 
   #hero-input .suggestions li,
@@ -502,6 +502,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 0;
   }
 
   .promo-section__wrapper img {
@@ -509,8 +510,10 @@
     width: 100%;
     height: auto;
     object-fit: contain;
-    image-rendering: -webkit-optimize-contrast;
+    image-rendering: auto;
     -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
   }
 }
 

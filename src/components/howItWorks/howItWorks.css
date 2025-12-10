@@ -537,6 +537,20 @@
     flex-direction: column;
     align-items: center;
     gap: 0;
+    position: relative;
+  }
+
+  /* Add visible connecting line between steps on iPhone */
+  .step-wrapper:not(:first-child):not(.split-step)::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 40px;
+    background: linear-gradient(to bottom, #46B6FF, rgba(70, 182, 255, 0.3));
+    z-index: 1;
   }
 
   .investors-vs-agents-step {
@@ -553,9 +567,12 @@
 
   /* Show mobile lines on iPhone */
   .line-top-mobile {
-    display: block;
+    display: block !important;
     margin: 20px auto;
     width: 32px;
+    height: 137px;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
   /* Hide split wrapper (curved lines) on iPhone */
@@ -606,6 +623,16 @@
     font-size: 16px;
     flex-shrink: 0;
     margin: 12px auto 16px;
+    border: 2px solid #46B6FF;
+    background-color: white;
+    color: #46B6FF;
+    position: relative;
+    z-index: 2;
+  }
+
+  .step-number.active {
+    background-color: #46B6FF;
+    color: white;
   }
 
   .process-step__step .icon {
@@ -653,7 +680,7 @@
     width: 55px;
     height: 55px;
     font-size: 18px;
-    transform: rotate(90deg);
+    transform: none;
     flex-shrink: 0;
   }
 
@@ -738,6 +765,19 @@
     margin-bottom: 35px;
   }
 
+  /* Add visible connecting line between steps on smaller iPhone */
+  .step-wrapper:not(:first-child):not(.split-step)::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 40px;
+    background: linear-gradient(to bottom, #46B6FF, rgba(70, 182, 255, 0.3));
+    z-index: 1;
+  }
+
   .section__description {
     font-size: 22px;
   }
@@ -761,6 +801,16 @@
     width: 36px;
     height: 36px;
     font-size: 14px;
+    border: 2px solid #46B6FF;
+    background-color: white;
+    color: #46B6FF;
+    position: relative;
+    z-index: 2;
+  }
+
+  .step-number.active {
+    background-color: #46B6FF;
+    color: white;
   }
 
   .process-step__step .icon {
@@ -792,6 +842,7 @@
     width: 50px;
     height: 50px;
     font-size: 16px;
+    transform: none;
   }
 
   .step-split-wrapper {
