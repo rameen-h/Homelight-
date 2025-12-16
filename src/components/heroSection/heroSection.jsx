@@ -1,13 +1,28 @@
 import React, { useEffect, useRef } from "react";
 import "./heroSection.css";
+import { buildPageData } from "../../utils/analytics";
 
 const PromoSection = () => {
   const geocoderContainerRef = useRef(null);
   const geocoderRef = useRef(null);
   const geocoderInputRef = useRef(null);
 
+  // Safe Segment event tracker
+  const trackEvent = (eventName, data) => {
+    if (!window.analytics) {
+      console.warn("⚠️ Segment not loaded yet, retrying...");
+      setTimeout(() => trackEvent(eventName, data), 100);
+      return;
+    }
+    window.analytics.ready(() => {
+      console.log(`🔵 Sending Segment event: ${eventName}`, data);
+      window.analytics.track(eventName, data);
+    });
+  };
+
   useEffect(() => {
     const loadMapbox = async () => {
+      // Load Mapbox scripts and CSS if not loaded
       if (!window.mapboxgl || !window.MapboxGeocoder) {
         await new Promise((resolve) => {
           const script1 = document.createElement("script");
@@ -36,6 +51,7 @@ const PromoSection = () => {
         document.head.appendChild(link2);
       }
 
+      // Set Mapbox token
       window.mapboxgl.accessToken =
         "pk.eyJ1IjoicmFtZWVuIiwiYSI6ImNtZ3VrdTR0eDBmbzYya3I3cjIwbnNzOHIifQ.YaGIyU6YCDj1c4MKJZahcA";
 
@@ -54,6 +70,7 @@ const PromoSection = () => {
       });
       geocoderRef.current = geocoder;
 
+      // Set geolocation proximity
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           ({ coords: { latitude, longitude } }) => {
@@ -63,71 +80,49 @@ const PromoSection = () => {
         );
       }
 
+      // Address selection
       geocoder.on("result", (e) => {
-        console.log("Selected address:", e.result);
-        // Remove "United States" from the input field after selection
+        console.log("🏠 Selected address:", e.result);
+
         if (geocoderInputRef.current) {
-          const currentValue = geocoderInputRef.current.value;
-          geocoderInputRef.current.value = currentValue.replace(/, United States$/, '');
+          geocoderInputRef.current.value = geocoderInputRef.current.value.replace(/, United States$/, '');
         }
+
+        const pageData = buildPageData();
+        pageData.address_chosen = 'dropdown';
+        pageData.prepop_address = e.result.place_name;
+
+        trackEvent("partial_quiz_submit", pageData);
+        trackEvent("quiz_start", pageData);
       });
 
-      // Remove active state from first suggestion when results appear
+      // Remove active suggestion styles
       geocoder.on("results", () => {
-        // Run immediately
         if (geocoderContainerRef.current) {
           const removeActiveStyles = () => {
-            // Remove active class from all suggestions and force white background
             const allSuggestions = geocoderContainerRef.current.querySelectorAll(".mapboxgl-ctrl-geocoder--suggestion");
-            allSuggestions.forEach((suggestion) => {
-              suggestion.classList.remove("active");
-              suggestion.removeAttribute("aria-selected");
-              // Force white background with inline styles
-              suggestion.style.backgroundColor = "#ffffff";
-              suggestion.style.background = "#ffffff";
-              suggestion.style.border = "none";
-              suggestion.style.boxShadow = "none";
-              suggestion.style.outline = "none";
-            });
-
-            // Remove active class from parent list items and force transparent background
-            const allListItems = geocoderContainerRef.current.querySelectorAll(".suggestions li");
-            allListItems.forEach((li) => {
-              li.classList.remove("active");
-              li.style.backgroundColor = "transparent";
-              li.style.background = "transparent";
-              li.style.border = "none";
-              li.style.boxShadow = "none";
-              li.style.outline = "none";
-              li.style.margin = "0";
-              li.style.padding = "0";
+            allSuggestions.forEach((s) => {
+              s.classList.remove("active");
+              s.style.background = "#ffffff";
             });
           };
-
           removeActiveStyles();
-          // Also run after a short delay in case Mapbox re-applies styles
           setTimeout(removeActiveStyles, 10);
         }
       });
 
+      // Attach geocoder to container
       if (geocoderContainerRef.current && geocoderContainerRef.current.childNodes.length === 0) {
         geocoder.addTo(geocoderContainerRef.current);
-
-        // Cache the input element for blur-on-outside
-        geocoderInputRef.current =
-          geocoderContainerRef.current.querySelector("input.mapboxgl-ctrl-geocoder--input");
+        geocoderInputRef.current = geocoderContainerRef.current.querySelector("input.mapboxgl-ctrl-geocoder--input");
       }
     };
 
     const handleOutside = (evt) => {
       const container = geocoderContainerRef.current;
       if (!container) return;
-
-      // If click/touch is outside the geocoder, close suggestions by blurring input.
       if (!container.contains(evt.target)) {
         if (geocoderInputRef.current) geocoderInputRef.current.blur();
-
-        // Fallback: force-hide suggestions if still visible
         const suggestions = container.querySelector(".suggestions");
         if (suggestions) suggestions.style.display = "none";
       }
@@ -135,14 +130,12 @@ const PromoSection = () => {
 
     loadMapbox();
 
-    // Capture phase to catch early (helps when other handlers stop propagation)
     document.addEventListener("click", handleOutside, true);
     document.addEventListener("touchstart", handleOutside, true);
 
     return () => {
       document.removeEventListener("click", handleOutside, true);
       document.removeEventListener("touchstart", handleOutside, true);
-
       if (geocoderRef.current && geocoderContainerRef.current) {
         try {
           geocoderRef.current.clear();
@@ -156,25 +149,19 @@ const PromoSection = () => {
   return (
     <section className="promo-section__wrapper">
       <div className="promo-section__content">
-        <h1 class="title">Who will win? Who can
-          <br></br>
-        close in 7 days?</h1>
+        <h1 className="title">Who will win? Who can<br />close in 7 days?</h1>
         <div className="description">
           Compare the top real estate agents and the largest investor network to get the best price and close fast.
         </div>
-
         <div className="cta-wrap">
           <div className="autocomplete-wrapper">
             <div className="autocomplete-box geocoder-control">
               <div id="hero-input" ref={geocoderContainerRef} />
-              <a className="btn-primary" id="hero-cta" href="#">
-                Get my offers
-              </a>
+              <a className="btn-primary" id="hero-cta" href="#">Get my offers</a>
             </div>
           </div>
         </div>
       </div>
-
       <picture>
         <source
           media="(min-width: 1024px)"

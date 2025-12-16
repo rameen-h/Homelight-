@@ -1,10 +1,13 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./search.css";
+import { trackButtonClick, trackEvent, buildPageData, waitForAnalytics } from "../../utils/analytics";
 
 const Search = () => {
   const searchGeocoderContainerRef = useRef(null);
   const searchGeocoderRef = useRef(null);
   const searchGeocoderInputRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const addressChosenMethod = useRef("manual"); // Track if from dropdown or manual
 
   useEffect(() => {
     const loadMapbox = async () => {
@@ -46,10 +49,10 @@ const Search = () => {
         types: "address",
         marker: false,
         flyTo: false,
-        render: function(item) {
-          const placeName = item.place_name.replace(/, United States$/, '');
+        render: function (item) {
+          const placeName = item.place_name.replace(/, United States$/, "");
           return `<div class='mapboxgl-ctrl-geocoder--suggestion'><div class='mapboxgl-ctrl-geocoder--suggestion-title'>${placeName}</div></div>`;
-        }
+        },
       });
       searchGeocoderRef.current = geocoder;
 
@@ -62,109 +65,75 @@ const Search = () => {
         );
       }
 
-      if (searchGeocoderContainerRef.current && searchGeocoderContainerRef.current.childNodes.length === 0) {
+      if (
+        searchGeocoderContainerRef.current &&
+        searchGeocoderContainerRef.current.childNodes.length === 0
+      ) {
         geocoder.addTo(searchGeocoderContainerRef.current);
-
-        // Cache the input element for blur-on-outside
         searchGeocoderInputRef.current =
-          searchGeocoderContainerRef.current.querySelector("input.mapboxgl-ctrl-geocoder--input");
+          searchGeocoderContainerRef.current.querySelector(
+            "input.mapboxgl-ctrl-geocoder--input"
+          );
       }
 
       geocoder.on("result", (e) => {
-        console.log("Selected address:", e.result);
-        // Remove "United States" from the input field after selection
+        const context = e.result.context || [];
+        const addressParts = {
+          street: e.result.address
+            ? `${e.result.address} ${e.result.text}`
+            : e.result.text,
+          city: context.find((c) => c.id.startsWith("place"))?.text || "",
+          state: context.find((c) => c.id.startsWith("region"))?.text || "",
+          zip: context.find((c) => c.id.startsWith("postcode"))?.text || "",
+        };
+
+        addressChosenMethod.current = "dropdown";
+
+        const pageData = buildPageData();
+        pageData.address_chosen = "dropdown";
+        pageData.prepop_address = e.result.place_name;
+        pageData.prepop_street = addressParts.street;
+        pageData.prepop_city = addressParts.city;
+        pageData.prepop_state = addressParts.state;
+        pageData.prepop_zip = addressParts.zip;
+
+        waitForAnalytics(() => {
+          trackEvent("address_selected", pageData);
+          window.analytics.track("partial_quiz_submit", pageData);
+          window.analytics.track("quiz_start", pageData);
+        });
+
+        // Remove "United States" from input
         setTimeout(() => {
-          const inputElement = searchGeocoderInputRef.current ||
-            searchGeocoderContainerRef.current?.querySelector("input.mapboxgl-ctrl-geocoder--input");
+          const inputElement =
+            searchGeocoderInputRef.current ||
+            searchGeocoderContainerRef.current?.querySelector(
+              "input.mapboxgl-ctrl-geocoder--input"
+            );
           if (inputElement) {
-            const currentValue = inputElement.value;
-            inputElement.value = currentValue.replace(/, United States$/, '');
+            inputElement.value = inputElement.value.replace(
+              /, United States$/,
+              ""
+            );
           }
         }, 0);
+
+        // Commented out auto-click for testing
+        // setTimeout(() => {
+        //   const button = document.querySelector(".ss-explore-btn");
+        //   if (button) button.click();
+        // }, 300);
       });
-
-      // Remove active state from first suggestion when results appear
-      geocoder.on("results", () => {
-        // Run immediately
-        if (searchGeocoderContainerRef.current) {
-          const removeActiveStyles = () => {
-            // Target both old and new mapbox autocomplete structures
-            const allSuggestions = searchGeocoderContainerRef.current.querySelectorAll(".mapboxgl-ctrl-geocoder--suggestion");
-            allSuggestions.forEach((suggestion) => {
-              suggestion.classList.remove("active");
-              suggestion.removeAttribute("aria-selected");
-              suggestion.style.backgroundColor = "#ffffff";
-              suggestion.style.background = "#ffffff";
-              suggestion.style.border = "none";
-              suggestion.style.boxShadow = "none";
-              suggestion.style.outline = "none";
-            });
-
-            // Remove active class from old suggestions structure
-            const allListItems = searchGeocoderContainerRef.current.querySelectorAll(".suggestions li");
-            allListItems.forEach((li) => {
-              li.classList.remove("active");
-              li.style.backgroundColor = "#ffffff";
-              li.style.background = "#ffffff";
-              li.style.border = "none";
-              li.style.boxShadow = "none";
-              li.style.outline = "none";
-              li.style.margin = "0";
-              li.style.padding = "12px 16px";
-              li.style.borderBottom = "1px solid #f0f0f0";
-            });
-
-            // Remove active class from new mapbox-place-autocomplete structure
-            const placeAutocomplete = document.querySelectorAll(".mapbox-place-autocomplete ul li");
-            placeAutocomplete.forEach((li) => {
-              li.classList.remove("active");
-              li.removeAttribute("aria-selected");
-              li.style.backgroundColor = "#ffffff";
-              li.style.background = "#ffffff";
-              li.style.border = "none";
-              li.style.boxShadow = "none";
-              li.style.outline = "none";
-              li.style.margin = "0";
-              li.style.padding = "12px 16px";
-              li.style.borderBottom = "1px solid #f0f0f0";
-            });
-          };
-
-          removeActiveStyles();
-          // Also run after a short delay in case Mapbox re-applies styles
-          setTimeout(removeActiveStyles, 10);
-        }
-      });
-    };
-
-    const handleOutside = (evt) => {
-      const container = searchGeocoderContainerRef.current;
-      if (!container) return;
-
-      // If click/touch is outside the geocoder, close suggestions by blurring input.
-      if (!container.contains(evt.target)) {
-        if (searchGeocoderInputRef.current) searchGeocoderInputRef.current.blur();
-
-        // Fallback: force-hide suggestions if still visible
-        const suggestions = container.querySelector(".suggestions");
-        if (suggestions) suggestions.style.display = "none";
-      }
     };
 
     loadMapbox();
 
-    // Capture phase to catch early (helps when other handlers stop propagation)
-    document.addEventListener("click", handleOutside, true);
-    document.addEventListener("touchstart", handleOutside, true);
-
     return () => {
-      document.removeEventListener("click", handleOutside, true);
-      document.removeEventListener("touchstart", handleOutside, true);
-
       if (searchGeocoderRef.current && searchGeocoderContainerRef.current) {
         try {
           searchGeocoderRef.current.clear();
-          searchGeocoderRef.current.onRemove && searchGeocoderRef.current.onRemove();
+          searchGeocoderRef.current.onRemove &&
+            searchGeocoderRef.current.onRemove();
           searchGeocoderContainerRef.current.innerHTML = "";
         } catch (_) {}
       }
@@ -186,8 +155,67 @@ const Search = () => {
               </div>
             </div>
 
-            <a href="#" className="ss-button ss-explore-btn">
-              Get estimate
+            <a
+              href="#"
+              className="ss-button ss-explore-btn"
+              onClick={(e) => {
+                e.preventDefault();
+                const addressValue =
+                  searchGeocoderInputRef.current?.value?.trim();
+                if (!addressValue) {
+                  searchGeocoderInputRef.current.style.border =
+                    "2px solid red";
+                  setTimeout(() => {
+                    alert("Please enter your address.");
+                    searchGeocoderInputRef.current.style.border = "";
+                  }, 200);
+                  return false;
+                }
+
+                const pageData = buildPageData();
+                pageData.button_text = "Get estimate";
+                if (!pageData.address_chosen || pageData.address_chosen === "no") {
+                  pageData.address_chosen = addressChosenMethod.current;
+                }
+                pageData.prepop_address = addressValue;
+
+                waitForAnalytics(() => {
+                  trackButtonClick("Get estimate", pageData);
+                  window.analytics.track("partial_quiz_submit", pageData);
+                  window.analytics.track("quiz_start", pageData);
+                });
+
+                setIsLoading(true);
+
+                // Navigation commented out for testing
+                // const timestamp = Date.now();
+                // const encodedAddress = encodeURIComponent(addressValue);
+                // const navUrl = `https://www.homelight.com/simple-sale/quiz?interested_in_agent=true?&address=${encodedAddress}&timestamp=${timestamp}#/qaas=0/`;
+                // window.location.href = navUrl;
+              }}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <svg
+                  aria-hidden="true"
+                  focusable="false"
+                  role="img"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 576 512"
+                  style={{
+                    width: "20px",
+                    height: "20px",
+                    animation: "spin 1s linear infinite",
+                  }}
+                >
+                  <path
+                    fill="currentColor"
+                    d="M287.1 64C181.1 64 95.1 149.1 95.1 256C95.1 362 181.1 448 287.1 448C358.1 448 419.3 410.5 452.9 354.4L453 354.5C446.1 369.4 451.5 387.3 465.1 395.7C481.3 404.6 500.9 399.3 509.7 384C509.9 383.7 510.1 383.4 510.2 383.1C466.1 460.1 383.1 512 288 512C146.6 512 32 397.4 32 256C32 114.6 146.6 0 288 0C270.3 0 256 14.33 256 32C256 49.67 270.3 64 288 64H287.1z"
+                  ></path>
+                </svg>
+              ) : (
+                "Get estimate"
+              )}
             </a>
           </div>
         </div>
