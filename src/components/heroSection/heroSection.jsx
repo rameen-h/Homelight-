@@ -115,6 +115,27 @@ const PromoSection = () => {
       if (geocoderContainerRef.current && geocoderContainerRef.current.childNodes.length === 0) {
         geocoder.addTo(geocoderContainerRef.current);
         geocoderInputRef.current = geocoderContainerRef.current.querySelector("input.mapboxgl-ctrl-geocoder--input");
+
+        // Position suggestions to match search bar width (including button)
+        const positionSuggestions = () => {
+          const autocompleteBox = document.querySelector('.autocomplete-box.geocoder-control');
+          const suggestions = geocoderContainerRef.current?.querySelector('.suggestions, .mapbox-place-autocomplete ul');
+
+          if (autocompleteBox && suggestions) {
+            const rect = autocompleteBox.getBoundingClientRect();
+            suggestions.style.position = 'absolute';
+            suggestions.style.width = `${rect.width}px`;
+            suggestions.style.left = '0';
+            suggestions.style.top = '100%';
+            suggestions.style.marginTop = '4px';
+          }
+        };
+
+        // Position on results
+        geocoder.on('results', positionSuggestions);
+
+        // Reposition on window resize
+        window.addEventListener('resize', positionSuggestions);
       }
     };
 
@@ -136,6 +157,7 @@ const PromoSection = () => {
     return () => {
       document.removeEventListener("click", handleOutside, true);
       document.removeEventListener("touchstart", handleOutside, true);
+      window.removeEventListener('resize', () => {});
       if (geocoderRef.current && geocoderContainerRef.current) {
         try {
           geocoderRef.current.clear();

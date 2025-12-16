@@ -87,7 +87,7 @@
 
 .autocomplete-wrapper {
   width: 100%;  /* increased to 100% to fill space and show full addresses */
-  max-width: clamp(650px, 75vw, 950px);  /* increased width to show placeholder fully */
+  max-width: min(90%, 950px);  /* responsive max-width that adapts to container */
   height: fit-content;
   position: relative;
   z-index: 20;
@@ -155,10 +155,6 @@
 /* Suggestions dropdown container for mapbox-place-autocomplete */
 .mapbox-place-autocomplete ul {
   position: absolute !important;
-  top: calc(100% + 1px) !important;
-  left: -1px !important;
-  right: -200px !important;
-  width: calc((100% + 245px) * 0.955) !important;
   background: #ffffff !important;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
   border: 1px solid #cfcfcf !important;
@@ -213,10 +209,6 @@
 /* Legacy mapbox geocoder suggestions styling for backwards compatibility */
 #hero-input .suggestions {
   position: absolute !important;
-  top: calc(100% + 1px) !important;
-  left: -1px !important;
-  right: -200px !important;
-  width: calc((100% + 245px) * 0.94) !important;
   background: #ffffff !important;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
   border: 1px solid #cfcfcf !important;
@@ -324,6 +316,100 @@
 }
 
 /* Responsive */
+
+/* Large screens - maintain better proportions */
+@media (min-width: 1400px) {
+  .autocomplete-wrapper {
+    max-width: min(85%, 900px);
+  }
+
+  .promo-section__content {
+    padding-left: 6rem;
+  }
+}
+
+/* Desktop and larger tablets (1025px - 1399px) */
+@media (min-width: 1025px) and (max-width: 1399px) {
+  .autocomplete-wrapper {
+    max-width: min(90%, 950px);
+  }
+
+  .promo-section__content {
+    padding-left: 4rem;
+  }
+}
+
+/* Tablet and Inspect Mode Responsiveness (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .autocomplete-wrapper {
+    max-width: 90%;
+    width: 90%;
+  }
+
+  .autocomplete-box.geocoder-control {
+    width: 100%;
+    padding-right: 140px;
+  }
+
+  #hero-input input.mapboxgl-ctrl-geocoder--input {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 10px 0 40px;
+  }
+
+  .autocomplete-box.geocoder-control .btn-primary {
+    right: 8px;
+    padding: 0 14px;
+    font-size: 0.95rem;
+  }
+}
+
+/* Medium screens and smaller inspect mode (600px - 768px) */
+@media (min-width: 600px) and (max-width: 768px) {
+  .promo-section__wrapper {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .promo-section__content {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .title {
+    font-size: 2.5rem;
+  }
+
+  .description {
+    font-size: 1.1rem;
+  }
+
+  .autocomplete-wrapper {
+    max-width: 95%;
+    width: 95%;
+  }
+
+  .autocomplete-box.geocoder-control {
+    width: 100%;
+    padding-right: 130px;
+  }
+
+  #hero-input input.mapboxgl-ctrl-geocoder--input {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 56px;
+    font-size: 1rem;
+    padding: 0 10px 0 38px;
+  }
+
+  .autocomplete-box.geocoder-control .btn-primary {
+    height: 46px;
+    right: 6px;
+    padding: 0 12px;
+    font-size: 0.9rem;
+  }
+}
+
 @media (max-width: 992px) {
   .promo-section__wrapper picture { flex: 0 0 48%; }
 }

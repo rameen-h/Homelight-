@@ -45,7 +45,7 @@
 /* Wrap for the input so it can flex properly */
 .ss-address-wrap {
   flex: 1 1 auto;
-  min-width: 700px; /* ensures minimum width for long addresses */
+  min-width: 0; /* allows flex shrinking for responsive behavior */
   position: relative;
   width: 100%;
 }
@@ -73,7 +73,7 @@
 
 .ss-geocoder-control .mapboxgl-ctrl-geocoder--input {
   width: 100% !important;
-  min-width: 700px !important;
+  min-width: 0 !important;
   max-width: 100% !important;
   border: none;
   padding: 10px 40px 10px 40px;
@@ -105,10 +105,10 @@
 }
 
 .ss-geocoder-control .suggestions-wrapper {
-  position: fixed;
-  z-index: 100;
-  left: -1%;
-  width:58.5vw;
+  position: absolute;
+  z-index: 999999;
+  left: 0;
+  width: 100%;
   max-width: none;
 }
 
@@ -122,11 +122,9 @@
   max-height: 320px;
   overflow-y: auto;
   z-index: 999999 !important;
-  margin: 4px 0 0 0 !important;
+  margin: 0 !important;
   padding: 0 !important;
   list-style: none !important;
-  width: 100% !important;
-  max-width: 100% !important;
 }
 
 /* Individual suggestion list items for mapbox-place-autocomplete */
@@ -193,16 +191,16 @@
 
 /* Legacy suggestions styling for backwards compatibility */
 .ss-geocoder-control .suggestions {
+  position: absolute !important;
   background: #ffffff !important;
   border-radius: 8px !important;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
   border: 1px solid #cfcfcf !important;
-  margin-top: 4px;
+  margin: 0 !important;
   text-align: left;
-  width: 100% !important;
-  max-width: 100% !important;
   padding: 0 !important;
   list-style: none !important;
+  z-index: 999999 !important;
 }
 
 .ss-geocoder-control .suggestions li {
@@ -295,6 +293,65 @@
 }
 
 /* ===== Responsive ===== */
+
+/* Large screens - maintain better proportions */
+@media (min-width: 1400px) {
+  .ss-cta-area {
+    width: 60vw;
+    max-width: 1200px;
+  }
+}
+
+/* Desktop and larger tablets (1025px - 1399px) */
+@media (min-width: 1025px) and (max-width: 1399px) {
+  .ss-cta-area {
+    width: 70vw;
+    max-width: 1000px;
+  }
+}
+
+/* Tablet and Inspect Mode Responsiveness (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .ss-cta-area {
+    width: 85vw;
+    max-width: 85vw;
+  }
+
+  .ss-address-wrap {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .ss-geocoder-control .mapboxgl-ctrl-geocoder--input {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+}
+
+/* Medium screens and smaller inspect mode (600px - 768px) */
+@media (min-width: 600px) and (max-width: 768px) {
+  .ss-cta-area {
+    width: 90vw;
+    max-width: 90vw;
+  }
+
+  .ss-address-wrap {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .ss-geocoder-control .mapboxgl-ctrl-geocoder--input {
+    min-width: 0 !important;
+    width: 100% !important;
+    padding: 10px 12px 10px 40px;
+  }
+
+  .ss-button.ss-explore-btn {
+    padding: 10px 14px;
+    font-size: 0.95rem;
+  }
+}
+
 @media (max-width: 767px) {
   .simple-sale-blue-ribbon .simple-sale-blue-ribbon__cta-wrap .mapbox-place-autocomplete {
     border-radius: 0.6rem;

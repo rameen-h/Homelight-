@@ -74,6 +74,30 @@ const Search = () => {
           searchGeocoderContainerRef.current.querySelector(
             "input.mapboxgl-ctrl-geocoder--input"
           );
+
+        // Position suggestions to match search bar width
+        const positionSuggestions = () => {
+          const ctaArea = document.querySelector('.ss-cta-area');
+          const addressWrap = document.querySelector('.ss-address-wrap');
+          const suggestions = searchGeocoderContainerRef.current?.querySelector('.suggestions, .mapbox-place-autocomplete ul');
+
+          if (ctaArea && addressWrap && suggestions) {
+            const ctaRect = ctaArea.getBoundingClientRect();
+            const wrapRect = addressWrap.getBoundingClientRect();
+
+            suggestions.style.position = 'absolute';
+            suggestions.style.width = `${ctaRect.width}px`;
+            suggestions.style.left = `${ctaRect.left - wrapRect.left}px`;
+            suggestions.style.top = '100%';
+            suggestions.style.marginTop = '4px';
+          }
+        };
+
+        // Position on results
+        geocoder.on('results', positionSuggestions);
+
+        // Reposition on window resize
+        window.addEventListener('resize', positionSuggestions);
       }
 
       geocoder.on("result", (e) => {
@@ -129,6 +153,7 @@ const Search = () => {
     loadMapbox();
 
     return () => {
+      window.removeEventListener('resize', () => {});
       if (searchGeocoderRef.current && searchGeocoderContainerRef.current) {
         try {
           searchGeocoderRef.current.clear();
