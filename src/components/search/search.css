@@ -378,8 +378,7 @@
 /* ===== iPhone Specific Styles ===== */
 @media only screen and (max-width: 430px) {
   .simple-sale-blue-ribbon {
-    padding-top: 40px;
-    padding-bottom: 40px;
+    padding: 40px 0;
     overflow-x: hidden;
     max-width: 100vw;
   }

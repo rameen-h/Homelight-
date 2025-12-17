@@ -145,13 +145,7 @@
 /* iPhone specific styles */
 @media only screen and (max-width: 430px) {
   .proof.unfixed {
-    bottom: 60px;
-    right: 12px;
-    left: 12px;
-    min-width: auto;
-    max-width: calc(100vw - 24px);
-    padding: 12px 14px;
-    gap: 10px;
+    display: none;
   }
 
   .proof-image .icon {

@@ -259,6 +259,74 @@
   }
 }
 
+/* Mobile comparison boxes styling */
+.mobile-comparison-boxes {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.comparison-box {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.comparison-box .box-header {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 16px 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.comparison-box .box-header sup {
+  font-size: 12px;
+}
+
+.simplesale-box {
+  background-color: #EBF5FF;
+}
+
+.simplesale-box .box-header {
+  color: #1192E5;
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.feature-item:last-child {
+  border-bottom: none;
+}
+
+.feature-item span {
+  font-size: 13px;
+  color: #333;
+  line-height: 1.5;
+  flex: 1;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.feature-item .check-icon,
+.feature-item .x-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
 /* iPhone specific styles */
 @media only screen and (max-width: 430px) {
   .comparison-section {
@@ -266,7 +334,7 @@
   }
 
   .comparison-header {
-    margin-bottom: 30px;
+    margin-bottom: 24px;
   }
 
   .comparison-title {
@@ -282,38 +350,23 @@
     font-size: 13px;
   }
 
-  .comparison-table {
-    border-radius: 6px;
+  .comparison-box {
+    padding: 18px;
   }
 
-  .comparison-table-header,
-  .comparison-row {
-    grid-template-columns: 1.4fr 1fr 1fr;
+  .comparison-box .box-header {
+    font-size: 15px;
+    margin-bottom: 14px;
   }
 
-  .header-cell {
-    padding: 9px 6px;
-    font-size: 11px;
+  .feature-item span {
+    font-size: 12px;
   }
 
-  .header-cell sup {
-    font-size: 8px;
-  }
-
-  .comparison-row > div {
-    padding: 9px 6px;
-  }
-
-  .feature-column {
-    font-size: 11px;
-    padding: 9px 8px;
-    line-height: 1.4;
-  }
-
-  .check-icon,
-  .x-icon {
-    width: 13px;
-    height: 13px;
+  .feature-item .check-icon,
+  .feature-item .x-icon {
+    width: 16px;
+    height: 16px;
   }
 }
 
