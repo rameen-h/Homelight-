@@ -6,6 +6,7 @@ const PromoSection = () => {
   const geocoderContainerRef = useRef(null);
   const geocoderRef = useRef(null);
   const geocoderInputRef = useRef(null);
+  const ctaWrapRef = useRef(null);
 
   // Safe Segment event tracker
   const trackEvent = (eventName, data) => {
@@ -19,6 +20,29 @@ const PromoSection = () => {
       window.analytics.track(eventName, data);
     });
   };
+
+  // Scroll listener for showing/hiding CTA on mobile
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerWidth <= 430 && ctaWrapRef.current) {
+        const scrollY = window.scrollY || window.pageYOffset;
+        const heroHeight = window.innerHeight * 0.6; // Show after scrolling 60% of viewport
+
+        if (scrollY > heroHeight) {
+          ctaWrapRef.current.classList.add('show-on-scroll');
+        } else {
+          ctaWrapRef.current.classList.remove('show-on-scroll');
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initial state
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   useEffect(() => {
     const loadMapbox = async () => {
@@ -175,7 +199,7 @@ const PromoSection = () => {
         <div className="description">
           Compare the top real estate agents and the largest investor network to get the best price and close fast.
         </div>
-        <div className="cta-wrap">
+        <div className="cta-wrap" ref={ctaWrapRef}>
           <div className="autocomplete-wrapper">
             <div className="autocomplete-box geocoder-control">
               <div id="hero-input" ref={geocoderContainerRef} />

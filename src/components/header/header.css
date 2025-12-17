@@ -99,17 +99,18 @@
 /* iPhone specific styles */
 @media only screen and (max-width: 430px) {
   .page-header-component {
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1rem;
     max-width: 100vw;
     overflow-x: hidden;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   }
 
   .header-container {
-    padding: 0;
+    padding: 0 8px;
     height: 60px;
     max-width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     position: relative;
   }
@@ -117,20 +118,24 @@
   .header-container::before {
     content: '';
     position: absolute;
-    left: 0;
+    left: 8px;
     top: 50%;
     transform: translateY(-50%);
-    width: 24px;
-    height: 24px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23273653' stroke-width='2'%3E%3Cline x1='3' y1='6' x2='21' y2='6'/%3E%3Cline x1='3' y1='12' x2='21' y2='12'/%3E%3Cline x1='3' y1='18' x2='21' y2='18'/%3E%3C/svg%3E");
+    width: 28px;
+    height: 28px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='none' stroke='%23273653' stroke-width='2.5' stroke-linecap='round'%3E%3Cline x1='3' y1='6' x2='21' y2='6'/%3E%3Cline x1='3' y1='12' x2='21' y2='12'/%3E%3Cline x1='3' y1='18' x2='21' y2='18'/%3E%3C/svg%3E");
     background-size: contain;
     background-repeat: no-repeat;
+    background-position: center;
+    z-index: 10;
   }
 
   .menu-logo {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex: 1;
+    margin-left: -28px;
   }
 
   .header-logo-component {
@@ -141,12 +146,14 @@
 
   .logo {
     margin: 0;
-    max-width: 140px;
+    max-width: 160px;
     height: auto;
+    display: block;
   }
 
   .logo.show {
     display: block;
+    opacity: 1;
   }
 
   .button-wrapper {
@@ -157,17 +164,26 @@
 /* Smaller iPhones (SE, Mini) */
 @media only screen and (max-width: 375px) {
   .page-header-component {
-    padding: 0.4rem 0.4rem;
+    padding: 0.5rem 0.8rem;
   }
 
   .header-container {
     height: 55px;
-    padding-left: 0.2rem;
-    padding-right: 0.2rem;
+    padding: 0 6px;
+  }
+
+  .header-container::before {
+    left: 6px;
+    width: 26px;
+    height: 26px;
+  }
+
+  .menu-logo {
+    margin-left: -26px;
   }
 
   .logo {
-    max-width: 85px;
+    max-width: 130px;
   }
 
   .button-wrapper .button {
