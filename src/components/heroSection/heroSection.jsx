@@ -1,12 +1,16 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./heroSection.css";
 import { buildPageData } from "../../utils/analytics";
 
-const PromoSection = () => {
+const PromoSection = ({ validatedParams, validatedUrl }) => {
   const geocoderContainerRef = useRef(null);
   const geocoderRef = useRef(null);
   const geocoderInputRef = useRef(null);
   const ctaWrapRef = useRef(null);
+  const [prepopulatedAddress, setPrepopulatedAddress] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const originalParamsRef = useRef({}); // Store original params for comparison
+  const addressChosenMethod = useRef("manual"); // Track if from dropdown or manual
 
   // Safe Segment event tracker
   const trackEvent = (eventName, data) => {
@@ -44,6 +48,7 @@ const PromoSection = () => {
     };
   }, []);
 
+  // Effect to handle loading of Mapbox and prepopulating the address
   useEffect(() => {
     const loadMapbox = async () => {
       // Load Mapbox scripts and CSS if not loaded
@@ -104,9 +109,17 @@ const PromoSection = () => {
         );
       }
 
+      // Set prepopulated address if passed via validatedParams
+      if (validatedParams?.address) {
+        setPrepopulatedAddress(validatedParams.address);
+      }
+
       // Address selection
       geocoder.on("result", (e) => {
         console.log("🏠 Selected address:", e.result);
+
+        // Mark that user selected from dropdown
+        addressChosenMethod.current = "dropdown";
 
         if (geocoderInputRef.current) {
           geocoderInputRef.current.value = geocoderInputRef.current.value.replace(/, United States$/, '');
@@ -118,21 +131,59 @@ const PromoSection = () => {
 
         trackEvent("partial_quiz_submit", pageData);
         trackEvent("quiz_start", pageData);
-      });
 
-      // Remove active suggestion styles
-      geocoder.on("results", () => {
-        if (geocoderContainerRef.current) {
-          const removeActiveStyles = () => {
-            const allSuggestions = geocoderContainerRef.current.querySelectorAll(".mapboxgl-ctrl-geocoder--suggestion");
-            allSuggestions.forEach((s) => {
-              s.classList.remove("active");
-              s.style.background = "#ffffff";
-            });
-          };
-          removeActiveStyles();
-          setTimeout(removeActiveStyles, 10);
+        // Show loading state
+        setIsLoading(true);
+
+        // Build redirect URL with selected address
+        const context = e.result.context || [];
+        const addressText = e.result.address
+          ? `${e.result.address} ${e.result.text}`
+          : e.result.text;
+        const city = context.find((c) => c.id.startsWith("place"))?.text || "";
+        const state = context.find((c) => c.id.startsWith("region"))?.text || "";
+        const zip = context.find((c) => c.id.startsWith("postcode"))?.text || "";
+
+        // Determine redirect address
+        let redirectAddress;
+        const originalParams = originalParamsRef.current;
+
+        // Check if user changed the prepopulated address
+        const hasOriginalParams = originalParams && originalParams.street;
+        const addressChanged = hasOriginalParams && (
+          originalParams.street !== addressText ||
+          originalParams.city !== city ||
+          originalParams.state !== state ||
+          originalParams.zip !== zip
+        );
+
+        if (addressChanged || !hasOriginalParams) {
+          // User selected a new/different address
+          redirectAddress = e.result.place_name.replace(/, United States$/, '');
+          console.log('📋 Dropdown selection - using new address for redirect');
+        } else {
+          // User selected same prepopulated address, use original URL params
+          const origParts = [
+            originalParams.street,
+            originalParams.city,
+            originalParams.state,
+            originalParams.zip
+          ].filter(Boolean);
+          redirectAddress = origParts.join(', ');
+          console.log('📌 Same prepopulated address - using original URL params');
         }
+
+        // Build redirect URL
+        const timestamp = Date.now();
+        const encodedAddress = encodeURIComponent(redirectAddress);
+        const navUrl = `https://www.homelight.com/simple-sale/quiz?interested_in_agent=true?&address=${encodedAddress}&timestamp=${timestamp}#/qaas=0/`;
+
+        console.log('🚀 Redirecting to:', navUrl);
+
+        // Small delay to show loading state
+        setTimeout(() => {
+          window.location.href = navUrl;
+        }, 300);
       });
 
       // Attach geocoder to container
@@ -163,25 +214,9 @@ const PromoSection = () => {
       }
     };
 
-    const handleOutside = (evt) => {
-      const container = geocoderContainerRef.current;
-      if (!container) return;
-      if (!container.contains(evt.target)) {
-        if (geocoderInputRef.current) geocoderInputRef.current.blur();
-        const suggestions = container.querySelector(".suggestions");
-        if (suggestions) suggestions.style.display = "none";
-      }
-    };
-
     loadMapbox();
 
-    document.addEventListener("click", handleOutside, true);
-    document.addEventListener("touchstart", handleOutside, true);
-
     return () => {
-      document.removeEventListener("click", handleOutside, true);
-      document.removeEventListener("touchstart", handleOutside, true);
-      window.removeEventListener('resize', () => {});
       if (geocoderRef.current && geocoderContainerRef.current) {
         try {
           geocoderRef.current.clear();
@@ -190,7 +225,42 @@ const PromoSection = () => {
         } catch (_) {}
       }
     };
-  }, []);
+  }, [validatedParams]);
+
+  // Prepopulate address when component loads
+  useEffect(() => {
+    console.log('🔍 HeroSection validatedParams:', validatedParams);
+    console.log('🔍 HeroSection geocoderInputRef.current:', geocoderInputRef.current);
+
+    if (validatedParams && Object.keys(validatedParams).length > 0 && geocoderInputRef.current) {
+      // Try to get full address first, or build from parts
+      let fullAddress = validatedParams.address || validatedParams.prepop_address || '';
+
+      if (!fullAddress) {
+        // Build address from individual parts
+        const street = validatedParams.street || validatedParams.prepop_street || '';
+        const city = validatedParams.city || validatedParams.prepop_city || '';
+        const state = validatedParams.state || validatedParams.prepop_state || '';
+        const zip = validatedParams.zip || validatedParams.prepop_zip || '';
+
+        // Store original params for comparison
+        originalParamsRef.current = { street, city, state, zip };
+
+        const addressParts = [street, city, state, zip].filter(Boolean);
+        fullAddress = addressParts.join(', ');
+      }
+
+      if (fullAddress) {
+        geocoderInputRef.current.value = fullAddress;
+        addressChosenMethod.current = "prepopulated";
+        console.log('🏠 Prepopulated Hero address:', fullAddress);
+      } else {
+        console.log('⚠️ No address parts found in validatedParams - leaving search bar empty');
+      }
+    } else {
+      console.log('⚠️ No validatedParams or geocoder input not ready - leaving search bar empty');
+    }
+  }, [validatedParams]);
 
   return (
     <section className="promo-section__wrapper">
@@ -203,7 +273,76 @@ const PromoSection = () => {
           <div className="autocomplete-wrapper">
             <div className="autocomplete-box geocoder-control">
               <div id="hero-input" ref={geocoderContainerRef} />
-              <a className="btn-primary" id="hero-cta" href="#">Get my offers</a>
+              <a
+                className="btn-primary"
+                id="hero-cta"
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const addressValue = geocoderInputRef.current?.value?.trim();
+
+                  if (!addressValue) {
+                    geocoderInputRef.current.style.border = "2px solid red";
+                    setTimeout(() => {
+                      alert("Please enter your address.");
+                      geocoderInputRef.current.style.border = "";
+                    }, 200);
+                    return false;
+                  }
+
+                  const pageData = buildPageData();
+                  pageData.button_text = "Get my offers";
+                  if (!pageData.address_chosen || pageData.address_chosen === "no") {
+                    pageData.address_chosen = addressChosenMethod.current;
+                  }
+                  pageData.prepop_address = addressValue;
+
+                  trackEvent("partial_quiz_submit", pageData);
+                  trackEvent("quiz_start", pageData);
+
+                  setIsLoading(true);
+
+                  // Determine which address to use for redirect
+                  let redirectAddress;
+                  const originalParams = originalParamsRef.current;
+
+                  // Check if user manually typed or if they used the prepopulated value
+                  if (addressChosenMethod.current === "manual") {
+                    // User manually typed the address
+                    redirectAddress = addressValue;
+                    console.log('⌨️ Manual entry - using typed address for redirect');
+                  } else if (addressChosenMethod.current === "dropdown") {
+                    // User selected from dropdown - use the new selected address
+                    redirectAddress = addressValue;
+                    console.log('📋 Dropdown selection - using new address for redirect');
+                  } else if (addressChosenMethod.current === "prepopulated" && originalParams.street) {
+                    // User didn't change prepopulated address - use original URL params
+                    const origParts = [
+                      originalParams.street,
+                      originalParams.city,
+                      originalParams.state,
+                      originalParams.zip
+                    ].filter(Boolean);
+                    redirectAddress = origParts.join(', ');
+                    console.log('📌 Prepopulated address unchanged - using original URL params');
+                  } else {
+                    // Fallback to current value
+                    redirectAddress = addressValue;
+                    console.log('🔄 Fallback - using current address value');
+                  }
+
+                  // Build redirect URL
+                  const timestamp = Date.now();
+                  const encodedAddress = encodeURIComponent(redirectAddress);
+                  const navUrl = `https://www.homelight.com/simple-sale/quiz?interested_in_agent=true?&address=${encodedAddress}&timestamp=${timestamp}#/qaas=0/`;
+
+                  console.log('🚀 Redirecting to:', navUrl);
+                  window.location.href = navUrl;
+                }}
+                disabled={isLoading}
+              >
+                {isLoading ? "Loading" : "Get my offers"}
+              </a>
             </div>
           </div>
         </div>

@@ -2,12 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import "./search.css";
 import { trackButtonClick, trackEvent, buildPageData, waitForAnalytics } from "../../utils/analytics";
 
-const Search = () => {
+const Search = ({ validatedUrl, validatedParams }) => {
   const searchGeocoderContainerRef = useRef(null);
   const searchGeocoderRef = useRef(null);
   const searchGeocoderInputRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const addressChosenMethod = useRef("manual"); // Track if from dropdown or manual
+  const originalParamsRef = useRef({}); // Store original params for comparison
 
   useEffect(() => {
     const loadMapbox = async () => {
@@ -111,6 +112,20 @@ const Search = () => {
           zip: context.find((c) => c.id.startsWith("postcode"))?.text || "",
         };
 
+        // Check if user changed the prepopulated address
+        const originalParams = originalParamsRef.current;
+        const hasOriginalParams = originalParams && originalParams.street;
+        const addressChanged = hasOriginalParams && (
+          originalParams.street !== addressParts.street ||
+          originalParams.city !== addressParts.city ||
+          originalParams.state !== addressParts.state ||
+          originalParams.zip !== addressParts.zip
+        );
+
+        if (addressChanged) {
+          console.log('✏️ User changed prepopulated address via dropdown');
+        }
+
         addressChosenMethod.current = "dropdown";
 
         const pageData = buildPageData();
@@ -142,11 +157,39 @@ const Search = () => {
           }
         }, 0);
 
-        // Commented out auto-click for testing
-        // setTimeout(() => {
-        //   const button = document.querySelector(".ss-explore-btn");
-        //   if (button) button.click();
-        // }, 300);
+        // Show loading state
+        setIsLoading(true);
+
+        // Determine redirect address
+        let redirectAddress;
+
+        if (addressChanged || !hasOriginalParams) {
+          // User selected a new/different address
+          redirectAddress = e.result.place_name.replace(/, United States$/, '');
+          console.log('📋 Dropdown selection - using new address for redirect');
+        } else {
+          // User selected same prepopulated address, use original URL params
+          const origParts = [
+            originalParams.street,
+            originalParams.city,
+            originalParams.state,
+            originalParams.zip
+          ].filter(Boolean);
+          redirectAddress = origParts.join(', ');
+          console.log('📌 Same prepopulated address - using original URL params');
+        }
+
+        // Build redirect URL
+        const timestamp = Date.now();
+        const encodedAddress = encodeURIComponent(redirectAddress);
+        const navUrl = `https://www.homelight.com/simple-sale/quiz?interested_in_agent=true?&address=${encodedAddress}&timestamp=${timestamp}#/qaas=0/`;
+
+        console.log('🚀 Redirecting to:', navUrl);
+
+        // Small delay to show loading state
+        setTimeout(() => {
+          window.location.href = navUrl;
+        }, 300);
       });
     };
 
@@ -164,6 +207,36 @@ const Search = () => {
       }
     };
   }, []);
+
+  // Prepopulate address from validated params only if address-related params exist
+  useEffect(() => {
+    console.log('🔍 Search validatedParams:', validatedParams);
+    console.log('🔍 Search searchGeocoderInputRef.current:', searchGeocoderInputRef.current);
+
+    if (validatedParams && Object.keys(validatedParams).length > 0 && searchGeocoderInputRef.current) {
+      // Build address string from validated params
+      const street = validatedParams.street || validatedParams.prepop_street || '';
+      const city = validatedParams.city || validatedParams.prepop_city || '';
+      const state = validatedParams.state || validatedParams.prepop_state || '';
+      const zip = validatedParams.zip || validatedParams.prepop_zip || '';
+
+      // Store original params for later comparison
+      originalParamsRef.current = { street, city, state, zip };
+
+      // Only prepopulate if at least one address field is present
+      const addressParts = [street, city, state, zip].filter(Boolean);
+      if (addressParts.length > 0) {
+        const fullAddress = addressParts.join(', ');
+        searchGeocoderInputRef.current.value = fullAddress;
+        addressChosenMethod.current = "prepopulated";
+        console.log('🏠 Prepopulated Search address:', fullAddress);
+      } else {
+        console.log('⚠️ No address parts found in validatedParams - leaving search bar empty');
+      }
+    } else {
+      console.log('⚠️ No validatedParams or search input not ready - leaving search bar empty');
+    }
+  }, [validatedParams]);
 
   return (
     <div className="simple-sale-blue-ribbon hide-on-quiz-start">
@@ -212,35 +285,46 @@ const Search = () => {
 
                 setIsLoading(true);
 
-                // Navigation commented out for testing
-                // const timestamp = Date.now();
-                // const encodedAddress = encodeURIComponent(addressValue);
-                // const navUrl = `https://www.homelight.com/simple-sale/quiz?interested_in_agent=true?&address=${encodedAddress}&timestamp=${timestamp}#/qaas=0/`;
-                // window.location.href = navUrl;
+                // Determine which address to use for redirect
+                let redirectAddress;
+                const originalParams = originalParamsRef.current;
+
+                // Check if user manually typed or if they used the prepopulated value
+                if (addressChosenMethod.current === "manual") {
+                  // User manually typed the address
+                  redirectAddress = addressValue;
+                  console.log('⌨️ Manual entry - using typed address for redirect');
+                } else if (addressChosenMethod.current === "dropdown") {
+                  // User selected from dropdown - use the new selected address
+                  redirectAddress = addressValue;
+                  console.log('📋 Dropdown selection - using new address for redirect');
+                } else if (addressChosenMethod.current === "prepopulated" && originalParams.street) {
+                  // User didn't change prepopulated address - use original URL params
+                  const origParts = [
+                    originalParams.street,
+                    originalParams.city,
+                    originalParams.state,
+                    originalParams.zip
+                  ].filter(Boolean);
+                  redirectAddress = origParts.join(', ');
+                  console.log('📌 Prepopulated address unchanged - using original URL params');
+                } else {
+                  // Fallback to current value
+                  redirectAddress = addressValue;
+                  console.log('🔄 Fallback - using current address value');
+                }
+
+                // Build redirect URL
+                const timestamp = Date.now();
+                const encodedAddress = encodeURIComponent(redirectAddress);
+                const navUrl = `https://www.homelight.com/simple-sale/quiz?interested_in_agent=true?&address=${encodedAddress}&timestamp=${timestamp}#/qaas=0/`;
+
+                console.log('🚀 Redirecting to:', navUrl);
+                window.location.href = navUrl;
               }}
               disabled={isLoading}
             >
-              {isLoading ? (
-                <svg
-                  aria-hidden="true"
-                  focusable="false"
-                  role="img"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 576 512"
-                  style={{
-                    width: "20px",
-                    height: "20px",
-                    animation: "spin 1s linear infinite",
-                  }}
-                >
-                  <path
-                    fill="currentColor"
-                    d="M287.1 64C181.1 64 95.1 149.1 95.1 256C95.1 362 181.1 448 287.1 448C358.1 448 419.3 410.5 452.9 354.4L453 354.5C446.1 369.4 451.5 387.3 465.1 395.7C481.3 404.6 500.9 399.3 509.7 384C509.9 383.7 510.1 383.4 510.2 383.1C466.1 460.1 383.1 512 288 512C146.6 512 32 397.4 32 256C32 114.6 146.6 0 288 0C270.3 0 256 14.33 256 32C256 49.67 270.3 64 288 64H287.1z"
-                  ></path>
-                </svg>
-              ) : (
-                "Get estimate"
-              )}
+              {isLoading ? "Loading" : "Get estimate"}
             </a>
           </div>
         </div>

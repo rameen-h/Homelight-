@@ -1,4 +1,3 @@
-
 import ClientStories from '../clientStories/clientStories';
 import Footer from '../footer/Footer';
 import Header from '../header/header';
@@ -13,15 +12,16 @@ import RecentlySold from '../recentlySold/RecentlySold';
 import ClientFAQs from '../clientFAQs/clientFAQs';
 import Notification from '../notification/notification';
 
-const HomePage = () => {
-
+const HomePage = ({ validatedUrl, validatedParams }) => {
+  console.log('HomePage - validatedParams:', validatedParams);
+  console.log('HomePage - validatedUrl:', validatedUrl);
   return (
     <div className="homepage">
       <Header />
-      <HeroSection />
+      <HeroSection validatedUrl={validatedUrl} validatedParams={validatedParams} />
       <Partition />
       <HowItWorks />
-      <Search />
+      <Search validatedUrl={validatedUrl} validatedParams={validatedParams} />
       <Pointers />
       <ClientStories />
       <ClientTestimonial />
@@ -30,7 +30,6 @@ const HomePage = () => {
       <ClientFAQs />
       <Notification />
       <Footer />
-      
     </div>
   );
 };
