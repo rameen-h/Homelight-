@@ -1,8 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './RecentlySold.css';
 
 const RecentlySold = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const soldProperties = [
     {
@@ -204,7 +217,8 @@ const RecentlySold = () => {
 }
   ];
 
-  const itemsPerSlide = 3;
+  // Change items per slide based on screen size
+  const itemsPerSlide = isMobile ? 1 : 3;
   const totalSlides = Math.ceil(soldProperties.length / itemsPerSlide);
 
   const nextSlide = () => {
