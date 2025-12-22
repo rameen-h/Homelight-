@@ -289,6 +289,13 @@
   font-size: 0.95rem !important;
   line-height: 1.4 !important;
   transition: background-color 0.15s ease !important;
+  text-align: left !important;
+}
+
+/* Ensure first child has white background, not grey */
+.mapbox-place-autocomplete ul li:first-child,
+.mapbox-place-autocomplete ul li:first-child * {
+  background: #ffffff !important;
 }
 
 /* Remove border from last item */
@@ -342,6 +349,13 @@
   font-size: 0.95rem !important;
   line-height: 1.4 !important;
   transition: background-color 0.15s ease !important;
+  text-align: left !important;
+}
+
+/* Ensure first child has white background, not grey */
+#hero-input .suggestions li:first-child,
+#hero-input .suggestions li:first-child * {
+  background: #ffffff !important;
 }
 
 /* Remove border from last suggestion */

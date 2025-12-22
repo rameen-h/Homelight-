@@ -177,9 +177,11 @@
   overflow-wrap: break-word !important;
 }
 
-/* Ensure first child has same styling */
+/* Ensure first child has same styling - white background, not grey */
 .ss-geocoder-control .mapbox-place-autocomplete ul li:first-child,
-.mapbox-place-autocomplete ul li:first-child {
+.mapbox-place-autocomplete ul li:first-child,
+.ss-geocoder-control .mapbox-place-autocomplete ul li:first-child *,
+.mapbox-place-autocomplete ul li:first-child * {
   background: #ffffff !important;
   border-top: none !important;
   margin-top: 0 !important;
@@ -249,6 +251,12 @@
   transition: background-color 0.15s ease !important;
   list-style: none !important;
   margin: 0 !important;
+}
+
+/* Ensure first child has white background, not grey */
+.ss-geocoder-control .suggestions li:first-child,
+.ss-geocoder-control .suggestions li:first-child * {
+  background: #ffffff !important;
 }
 
 /* Remove border from last suggestion */
@@ -563,6 +571,13 @@
     word-wrap: break-word !important;
   }
 
+  .ss-geocoder-control .suggestions li:first-child,
+  .ss-geocoder-control .mapbox-place-autocomplete ul li:first-child,
+  .ss-geocoder-control .suggestions li:first-child *,
+  .ss-geocoder-control .mapbox-place-autocomplete ul li:first-child * {
+    background: #ffffff !important;
+  }
+
   .ss-geocoder-control .suggestions li:hover,
   .ss-geocoder-control .mapbox-place-autocomplete ul li:hover {
     background: #f5f5f5 !important;
@@ -661,5 +676,12 @@
     line-height: 1.4 !important;
     white-space: normal !important;
     word-wrap: break-word !important;
+  }
+
+  .ss-geocoder-control .suggestions li:first-child,
+  .ss-geocoder-control .mapbox-place-autocomplete ul li:first-child,
+  .ss-geocoder-control .suggestions li:first-child *,
+  .ss-geocoder-control .mapbox-place-autocomplete ul li:first-child * {
+    background: #ffffff !important;
   }
 }

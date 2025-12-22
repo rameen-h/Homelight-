@@ -758,8 +758,8 @@
   }
 
   .logos {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
     width: 100%;
     margin-top: 16px;
@@ -944,8 +944,8 @@
   .logos {
     gap: 8px;
     margin-top: 14px;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .logo-wrapper {
