@@ -712,8 +712,8 @@
 
   .step-split-wrapper {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    grid-template-columns: 1fr;
+    gap: 40px;
     max-width: 100%;
     width: 100%;
     padding: 0 4px;
@@ -911,8 +911,8 @@
 
   .step-split-wrapper {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    grid-template-columns: 1fr;
+    gap: 35px;
     padding: 0 2px;
     max-width: 100%;
     width: 100%;
