@@ -5,6 +5,121 @@
 const API_BASE_URL = 'https://api.palisade.ai';
 
 /**
+ * Call partial match API for additional information
+ * @param {Object} params - Parameters for the partial match API
+ * @returns {Promise<Object>} Response from partial match API
+ */
+const callPartialMatchApi = async (params) => {
+  const queryParams = new URLSearchParams();
+
+  if (params.address) queryParams.set('address', params.address);
+  if (params.name) queryParams.set('name', params.name);
+  if (params.phone) queryParams.set('phone', params.phone);
+  if (params.email) queryParams.set('email', params.email);
+
+  const apiUrl = `${API_BASE_URL}/checkout/v3/search/partial-match?${queryParams.toString()}`;
+
+  const response = await fetch(apiUrl);
+
+  if (!response.ok) {
+    throw new Error(`Partial match API call failed with status: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data;
+};
+
+/**
+ * Generate session ID - only creates new session when tab is reopened
+ * Session ID is stored in sessionStorage so it persists during page navigation
+ * but is cleared when tab is closed
+ * @returns {Promise<string|null>} Session ID or null if generation fails
+ */
+export const generateSessionId = async () => {
+  // Check if session ID already exists in sessionStorage (persists during tab session)
+  const savedSessionId = sessionStorage.getItem('alysonSessionId');
+  if (savedSessionId) {
+    // Ensure URL parameters are set with existing session ID
+    const parser = new URL(window.location.href);
+    const searchParams = parser.searchParams;
+
+    // Update URL parameters with session ID
+    searchParams.set('utm_content', savedSessionId);
+    searchParams.set('sessionId', savedSessionId);
+    searchParams.set('d', '1');
+    searchParams.set('checkoutId', '28');
+
+    const newUrl = `${parser.origin}${parser.pathname}?${searchParams.toString()}${parser.hash}`;
+    window.history.replaceState({}, '', newUrl);
+
+    return savedSessionId;
+  }
+
+  // No saved session - generate new one (happens when tab is reopened)
+  const pageUrl = window.location.href;
+  const apiUrl = `${API_BASE_URL}/api/alyson-session/params`;
+  const authToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTgwLCJpYXQiOjE3NDQ3MTY0MTksImV4cCI6MTc0NDgwMjgxOX0.DZKeID0-j3lv6JU7PS_v6fgEocLK9aqdDXSbK0i7t_M';
+
+  try {
+    // Create abort controller for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+    const payload = JSON.stringify({ pageUrl });
+
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'x-auth-token': authToken,
+        'Content-Type': 'application/json',
+      },
+      body: payload,
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      throw new Error(`Session API call failed with status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const sessionId = data?.data?.[0]?.alyson_session_id;
+
+    if (!sessionId) {
+      throw new Error('Missing sessionId in response');
+    }
+
+    // Save sessionId (will be cleared when tab is closed)
+    window.alysonSessionId = sessionId;
+    sessionStorage.setItem('alysonSessionId', sessionId);
+
+    // Update URL parameters - utm_content and sessionId are the same
+    const parser = new URL(window.location.href);
+    const searchParams = parser.searchParams;
+    searchParams.set('utm_content', sessionId);
+    searchParams.set('sessionId', sessionId);
+    searchParams.set('d', '1');
+    searchParams.set('checkoutId', '28');
+
+    const newUrl = `${parser.origin}${parser.pathname}?${searchParams.toString()}${parser.hash}`;
+    window.history.replaceState({}, '', newUrl);
+
+    return sessionId;
+  } catch (error) {
+    return null;
+  }
+};
+
+/**
+ * Get current session ID for segment tracking
+ * @returns {string|null} Current session ID or null
+ */
+export const getSessionId = () => {
+  return sessionStorage.getItem('alysonSessionId') || window.alysonSessionId || null;
+};
+
+/**
  * Validate landing page by sending URL parameters to backend
  * @param {string} currentUrl - The current page URL with query parameters
  * @returns {Promise<Object>} Response from the API
@@ -13,11 +128,6 @@ export const validateLandingPage = async (currentUrl) => {
   try {
     // Use current URL with all query parameters
     const urlToSend = currentUrl || window.location.href;
-
-    console.log('🌐 Environment:', process.env.NODE_ENV);
-    console.log('📤 API Call - validateLandingPage');
-    console.log('📍 Full URL being sent:', urlToSend);
-    console.log('📦 Request body:', JSON.stringify({ url: urlToSend }, null, 2));
 
     const response = await fetch(`${API_BASE_URL}/checkout/prepop/v2/validate/landing-page`, {
       method: 'POST',
@@ -34,10 +144,101 @@ export const validateLandingPage = async (currentUrl) => {
     }
 
     const data = await response.json();
-    console.log('📥 API Response:', data);
+
+    // Set identity API source based on _index field (keep original source name)
+    if (data?.data?.[0]) {
+      const indexName = data.data[0]._index;
+      data.identity_api_source = indexName === "data_axle" ? "address_dataaxle" : "address_internal";
+
+      // Store the identity response
+      window.identityResp = data.data[0];
+      data.identity_api_res = window.identityResp;
+
+      // Set initial identity checkout category
+      const source = data.data[0]._source || {};
+      data.identity_checkout_category =
+        (source.name && source.email && source.phone)
+          ? "all_data_present"
+          : "partial_data_present";
+    }
+
+    // Check if landing page API response has incomplete data
+    // Call v3 if missing any of name, phone, or email
+    const source = data?.data?.[0]?._source || {};
+    const hasName = source.name && source.name.trim() !== '';
+    const hasPhone = source.phone && source.phone.trim() !== '';
+    const hasEmail = source.email && source.email.trim() !== '';
+    const hasAllFields = hasName && hasPhone && hasEmail;
+
+    if (!hasAllFields) {
+      // Keep original _index
+      const originalIndex = data?.data?.[0]?._index;
+
+      // Parse URL for parameters
+      const urlParams = new URLSearchParams(new URL(urlToSend).search);
+      const address = window?.addressVal || urlParams.get('address') || '';
+      const name = urlParams.get('name') || source.name || '';
+      const phone = urlParams.get('phone') || source.phone || '';
+      const email = urlParams.get('email') || source.email || '';
+
+      // Call partial match API if we have at least one parameter (address, name, phone, or email)
+      if (address || name || phone || email) {
+        try {
+          const partialMatchData = await callPartialMatchApi({
+            address: address,
+            name: name,
+            phone: phone,
+            email: email,
+          });
+
+          // Merge data, preferring partial match API results
+          if (partialMatchData?.data?.[0]) {
+            const partialSource = partialMatchData.data[0]._source || {};
+
+            // Update _source with merged data
+            data.data[0] = data.data[0] || {};
+            data.data[0]._source = {
+              name: partialSource.name || source.name,
+              phone: partialSource.phone || source.phone,
+              email: partialSource.email || source.email,
+              // Add address fields from v3 response for prefilling
+              address: partialSource.address || source.address || '',
+              street: partialSource.street || source.street || '',
+              city: partialSource.city || source.city || '',
+              state: partialSource.state || source.state || '',
+              zip: partialSource.zip || source.zip || '',
+            };
+
+            // IMPORTANT: Keep the original _index (don't replace with partial match _index)
+            if (originalIndex) {
+              data.data[0]._index = originalIndex;
+            }
+
+            // Update identity response
+            window.identityResp = data.data[0];
+            data.identity_api_res = window.identityResp;
+
+            // Update identity checkout category based on merged data
+            const updatedSource = data.data[0]._source;
+            data.identity_checkout_category =
+              (updatedSource.name && updatedSource.email && updatedSource.phone)
+                ? "all_data_present"
+                : "partial_data_present";
+
+            // Update identity_api_source if not set
+            if (!data.identity_api_source && data.data[0]._index) {
+              const indexName = data.data[0]._index;
+              data.identity_api_source = indexName === "data_axle" ? "address_dataaxle" : "address_internal";
+            }
+          }
+        } catch (partialError) {
+          // Continue with original data if partial match fails
+        }
+      }
+    }
+
     return data;
   } catch (error) {
-    console.error('❌ Error validating landing page:', error);
     throw error;
   }
 };
@@ -83,7 +284,6 @@ export const validateAddressSearch = async (addressData, originalParams = {}) =>
     if (userChangedAddress) {
       // User changed the address, use the new one
       redirectAddress = placeName;
-      console.log('✏️ User changed address - using new address for redirect');
     } else if (originalParams.street) {
       // User didn't change prepopulated address, use original URL format
       const origParts = [
@@ -93,11 +293,9 @@ export const validateAddressSearch = async (addressData, originalParams = {}) =>
         originalParams.zip
       ].filter(Boolean);
       redirectAddress = origParts.join(', ');
-      console.log('📌 User kept prepopulated address - using original URL params');
     } else {
       // No original params, use the new address
       redirectAddress = placeName;
-      console.log('🆕 New address entry - using selected address');
     }
 
     // Build redirect URL
@@ -119,13 +317,6 @@ export const validateAddressSearch = async (addressData, originalParams = {}) =>
     // Build full URL with origin, pathname, and all query parameters
     const fullUrl = `${window.location.origin}${window.location.pathname}?${existingParams.toString()}`;
 
-    console.log('🏠 API Call - validateAddressSearch');
-    console.log('📍 Address selected:', placeName);
-    console.log('📦 Parsed components:', { street: addressText, city, state, zip });
-    console.log('🔗 Redirect URL:', redirectUrl);
-    console.log('📍 Full URL being sent:', fullUrl);
-    console.log('📦 Request body:', JSON.stringify({ url: fullUrl }, null, 2));
-
     const response = await fetch(`${API_BASE_URL}/checkout/prepop/v2/validate/landing-page`, {
       method: 'POST',
       headers: {
@@ -141,7 +332,6 @@ export const validateAddressSearch = async (addressData, originalParams = {}) =>
     }
 
     const data = await response.json();
-    console.log('📥 API Response:', data);
 
     // Return both API response and redirect URL
     return {
@@ -149,7 +339,6 @@ export const validateAddressSearch = async (addressData, originalParams = {}) =>
       redirectUrl
     };
   } catch (error) {
-    console.error('❌ Error validating address search:', error);
     throw error;
   }
 };

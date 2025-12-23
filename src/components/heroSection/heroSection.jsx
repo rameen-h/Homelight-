@@ -15,12 +15,10 @@ const PromoSection = ({ validatedParams, validatedUrl }) => {
   // Safe Segment event tracker
   const trackEvent = (eventName, data) => {
     if (!window.analytics) {
-      console.warn("⚠️ Segment not loaded yet, retrying...");
       setTimeout(() => trackEvent(eventName, data), 100);
       return;
     }
     window.analytics.ready(() => {
-      console.log(`🔵 Sending Segment event: ${eventName}`, data);
       window.analytics.track(eventName, data);
     });
   };
@@ -105,7 +103,7 @@ const PromoSection = ({ validatedParams, validatedUrl }) => {
           ({ coords: { latitude, longitude } }) => {
             geocoder.setProximity({ longitude, latitude });
           },
-          (err) => console.warn("Geolocation failed or denied:", err)
+          () => {}
         );
       }
 
@@ -116,8 +114,6 @@ const PromoSection = ({ validatedParams, validatedUrl }) => {
 
       // Address selection
       geocoder.on("result", (e) => {
-        console.log("🏠 Selected address:", e.result);
-
         // Mark that user selected from dropdown
         addressChosenMethod.current = "dropdown";
 
@@ -160,7 +156,6 @@ const PromoSection = ({ validatedParams, validatedUrl }) => {
         if (addressChanged || !hasOriginalParams) {
           // User selected a new/different address
           redirectAddress = e.result.place_name.replace(/, United States$/, '');
-          console.log('📋 Dropdown selection - using new address for redirect');
         } else {
           // User selected same prepopulated address, use original URL params
           const origParts = [
@@ -170,15 +165,12 @@ const PromoSection = ({ validatedParams, validatedUrl }) => {
             originalParams.zip
           ].filter(Boolean);
           redirectAddress = origParts.join(', ');
-          console.log('📌 Same prepopulated address - using original URL params');
         }
 
         // Build redirect URL
         const timestamp = Date.now();
         const encodedAddress = encodeURIComponent(redirectAddress);
         const navUrl = `https://www.homelight.com/simple-sale/quiz?interested_in_agent=true?&address=${encodedAddress}&timestamp=${timestamp}#/qaas=0/`;
-
-        console.log('🚀 Redirecting to:', navUrl);
 
         // Small delay to show loading state
         setTimeout(() => {
@@ -229,9 +221,6 @@ const PromoSection = ({ validatedParams, validatedUrl }) => {
 
   // Prepopulate address when component loads
   useEffect(() => {
-    console.log('🔍 HeroSection validatedParams:', validatedParams);
-    console.log('🔍 HeroSection geocoderInputRef.current:', geocoderInputRef.current);
-
     if (validatedParams && Object.keys(validatedParams).length > 0 && geocoderInputRef.current) {
       // Try to get full address first, or build from parts
       let fullAddress = validatedParams.address || validatedParams.prepop_address || '';
@@ -251,14 +240,11 @@ const PromoSection = ({ validatedParams, validatedUrl }) => {
       }
 
       if (fullAddress) {
+        // Remove "United States" from the address
+        fullAddress = fullAddress.replace(/,?\s*United States\s*$/i, '').trim();
         geocoderInputRef.current.value = fullAddress;
         addressChosenMethod.current = "prepopulated";
-        console.log('🏠 Prepopulated Hero address:', fullAddress);
-      } else {
-        console.log('⚠️ No address parts found in validatedParams - leaving search bar empty');
       }
-    } else {
-      console.log('⚠️ No validatedParams or geocoder input not ready - leaving search bar empty');
     }
   }, [validatedParams]);
 
@@ -310,11 +296,9 @@ const PromoSection = ({ validatedParams, validatedUrl }) => {
                   if (addressChosenMethod.current === "manual") {
                     // User manually typed the address
                     redirectAddress = addressValue;
-                    console.log('⌨️ Manual entry - using typed address for redirect');
                   } else if (addressChosenMethod.current === "dropdown") {
                     // User selected from dropdown - use the new selected address
                     redirectAddress = addressValue;
-                    console.log('📋 Dropdown selection - using new address for redirect');
                   } else if (addressChosenMethod.current === "prepopulated" && originalParams.street) {
                     // User didn't change prepopulated address - use original URL params
                     const origParts = [
@@ -324,19 +308,15 @@ const PromoSection = ({ validatedParams, validatedUrl }) => {
                       originalParams.zip
                     ].filter(Boolean);
                     redirectAddress = origParts.join(', ');
-                    console.log('📌 Prepopulated address unchanged - using original URL params');
                   } else {
                     // Fallback to current value
                     redirectAddress = addressValue;
-                    console.log('🔄 Fallback - using current address value');
                   }
 
                   // Build redirect URL
                   const timestamp = Date.now();
                   const encodedAddress = encodeURIComponent(redirectAddress);
                   const navUrl = `https://www.homelight.com/simple-sale/quiz?interested_in_agent=true?&address=${encodedAddress}&timestamp=${timestamp}#/qaas=0/`;
-
-                  console.log('🚀 Redirecting to:', navUrl);
                   window.location.href = navUrl;
                 }}
                 disabled={isLoading}

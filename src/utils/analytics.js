@@ -25,14 +25,21 @@ export const buildPageData = (sessionId = '', status = '', errorMessage = '', ap
   const parser = new URL(window.location.href);
   const searchParams = parser.searchParams;
 
+  // Get session ID from parameter, sessionStorage, or window
+  const finalSessionId = sessionId ||
+                         sessionStorage.getItem('alysonSessionId') ||
+                         window.alysonSessionId ||
+                         searchParams.get("sessionId") ||
+                         '';
+
   return {
     // Platform identifier
     source_platform: 'homelight',
 
     // Session tracking
-    sessionId: sessionId || '',
+    sessionId: finalSessionId,
     checkoutId: searchParams.get("checkoutId") || "28",
-    utmContent: searchParams.get("utm_content") || sessionId || '',
+    utmContent: searchParams.get("utm_content") || finalSessionId,
     experiment_id: searchParams.get("eid") || '28',
 
     // UTM Parameters (camelCase to match SimpleSale exactly)

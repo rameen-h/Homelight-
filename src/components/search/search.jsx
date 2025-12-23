@@ -62,7 +62,7 @@ const Search = ({ validatedUrl, validatedParams }) => {
           ({ coords: { latitude, longitude } }) => {
             geocoder.setProximity({ longitude, latitude });
           },
-          (err) => console.warn("Geolocation failed or denied:", err)
+          () => {}
         );
       }
 
@@ -122,10 +122,6 @@ const Search = ({ validatedUrl, validatedParams }) => {
           originalParams.zip !== addressParts.zip
         );
 
-        if (addressChanged) {
-          console.log('✏️ User changed prepopulated address via dropdown');
-        }
-
         addressChosenMethod.current = "dropdown";
 
         const pageData = buildPageData();
@@ -166,7 +162,6 @@ const Search = ({ validatedUrl, validatedParams }) => {
         if (addressChanged || !hasOriginalParams) {
           // User selected a new/different address
           redirectAddress = e.result.place_name.replace(/, United States$/, '');
-          console.log('📋 Dropdown selection - using new address for redirect');
         } else {
           // User selected same prepopulated address, use original URL params
           const origParts = [
@@ -176,15 +171,12 @@ const Search = ({ validatedUrl, validatedParams }) => {
             originalParams.zip
           ].filter(Boolean);
           redirectAddress = origParts.join(', ');
-          console.log('📌 Same prepopulated address - using original URL params');
         }
 
         // Build redirect URL
         const timestamp = Date.now();
         const encodedAddress = encodeURIComponent(redirectAddress);
         const navUrl = `https://www.homelight.com/simple-sale/quiz?interested_in_agent=true?&address=${encodedAddress}&timestamp=${timestamp}#/qaas=0/`;
-
-        console.log('🚀 Redirecting to:', navUrl);
 
         // Small delay to show loading state
         setTimeout(() => {
@@ -210,31 +202,31 @@ const Search = ({ validatedUrl, validatedParams }) => {
 
   // Prepopulate address from validated params only if address-related params exist
   useEffect(() => {
-    console.log('🔍 Search validatedParams:', validatedParams);
-    console.log('🔍 Search searchGeocoderInputRef.current:', searchGeocoderInputRef.current);
-
     if (validatedParams && Object.keys(validatedParams).length > 0 && searchGeocoderInputRef.current) {
-      // Build address string from validated params
-      const street = validatedParams.street || validatedParams.prepop_street || '';
-      const city = validatedParams.city || validatedParams.prepop_city || '';
-      const state = validatedParams.state || validatedParams.prepop_state || '';
-      const zip = validatedParams.zip || validatedParams.prepop_zip || '';
+      // Try to get full address first, or build from parts
+      let fullAddress = validatedParams.address || validatedParams.prepop_address || '';
 
-      // Store original params for later comparison
-      originalParamsRef.current = { street, city, state, zip };
+      if (!fullAddress) {
+        // Build address string from validated params
+        const street = validatedParams.street || validatedParams.prepop_street || '';
+        const city = validatedParams.city || validatedParams.prepop_city || '';
+        const state = validatedParams.state || validatedParams.prepop_state || '';
+        const zip = validatedParams.zip || validatedParams.prepop_zip || '';
 
-      // Only prepopulate if at least one address field is present
-      const addressParts = [street, city, state, zip].filter(Boolean);
-      if (addressParts.length > 0) {
-        const fullAddress = addressParts.join(', ');
+        // Store original params for later comparison
+        originalParamsRef.current = { street, city, state, zip };
+
+        // Only prepopulate if at least one address field is present
+        const addressParts = [street, city, state, zip].filter(Boolean);
+        fullAddress = addressParts.join(', ');
+      }
+
+      if (fullAddress) {
+        // Remove "United States" from the address
+        fullAddress = fullAddress.replace(/,?\s*United States\s*$/i, '').trim();
         searchGeocoderInputRef.current.value = fullAddress;
         addressChosenMethod.current = "prepopulated";
-        console.log('🏠 Prepopulated Search address:', fullAddress);
-      } else {
-        console.log('⚠️ No address parts found in validatedParams - leaving search bar empty');
       }
-    } else {
-      console.log('⚠️ No validatedParams or search input not ready - leaving search bar empty');
     }
   }, [validatedParams]);
 
@@ -293,11 +285,9 @@ const Search = ({ validatedUrl, validatedParams }) => {
                 if (addressChosenMethod.current === "manual") {
                   // User manually typed the address
                   redirectAddress = addressValue;
-                  console.log('⌨️ Manual entry - using typed address for redirect');
                 } else if (addressChosenMethod.current === "dropdown") {
                   // User selected from dropdown - use the new selected address
                   redirectAddress = addressValue;
-                  console.log('📋 Dropdown selection - using new address for redirect');
                 } else if (addressChosenMethod.current === "prepopulated" && originalParams.street) {
                   // User didn't change prepopulated address - use original URL params
                   const origParts = [
@@ -307,19 +297,15 @@ const Search = ({ validatedUrl, validatedParams }) => {
                     originalParams.zip
                   ].filter(Boolean);
                   redirectAddress = origParts.join(', ');
-                  console.log('📌 Prepopulated address unchanged - using original URL params');
                 } else {
                   // Fallback to current value
                   redirectAddress = addressValue;
-                  console.log('🔄 Fallback - using current address value');
                 }
 
                 // Build redirect URL
                 const timestamp = Date.now();
                 const encodedAddress = encodeURIComponent(redirectAddress);
                 const navUrl = `https://www.homelight.com/simple-sale/quiz?interested_in_agent=true?&address=${encodedAddress}&timestamp=${timestamp}#/qaas=0/`;
-
-                console.log('🚀 Redirecting to:', navUrl);
                 window.location.href = navUrl;
               }}
               disabled={isLoading}
