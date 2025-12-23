@@ -19,11 +19,44 @@ function App() {
         const checkAnalytics = () => {
           if (window.analytics && typeof window.analytics.page === 'function') {
             // Send page view first with session ID
+            const urlParams = new URLSearchParams(window.location.search);
             const pageData = {
+              // Page metadata
+              path: window.location.pathname || '',
+              referrer: document.referrer || '',
+              search: window.location.search || '',
+              title: document.title || '',
+              url: window.location.href || '',
+              category: window.location.href,
+              name: "Simple Sale Cash Offer",
+
+              // Platform and session
               source_platform: 'homelight',
               sessionId: generatedSessionId || '',
-              checkoutId: new URLSearchParams(window.location.search).get("checkoutId") || "28",
-              experiment_id: new URLSearchParams(window.location.search).get("eid") || '28',
+              checkoutId: urlParams.get("checkoutId") || "28",
+              experiment_id: urlParams.get("eid") || '28',
+
+              // UTM parameters
+              utmContent: urlParams.get("utm_content") || '',
+              utmSource: urlParams.get("utm_source") || '',
+              utmMedium: urlParams.get("utm_medium") || '',
+              utmCampaign: urlParams.get("utm_campaign") || '',
+              utmTerm: urlParams.get("utm_term") || '',
+
+              // Prepopulated fields
+              prepop_email: urlParams.get("email") || '',
+              prepop_phone: urlParams.get("phone") || '',
+              prepop_name: urlParams.get("name") || '',
+              prepop_address: urlParams.get("address") || '',
+              prepop_street: urlParams.get("street") || '',
+              prepop_city: urlParams.get("city") || '',
+              prepop_state: urlParams.get("state") || '',
+              prepop_zip: urlParams.get("zip") || '',
+              prepop_fname: urlParams.get("fname") || '',
+              prepop_lname: urlParams.get("lname") || '',
+
+              // Status flags
+              address_chosen: 'no',
             };
             window.analytics.page(window.location.href, "Simple Sale Cash Offer", pageData);
             resolve();
