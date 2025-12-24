@@ -2,74 +2,19 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import HomePage from './components/Homepage/pages';
 import { validateLandingPage, generateSessionId, getSessionId } from './utils/api';
-import { buildPageData } from './utils/analytics';
 
 function App() {
   const [validatedUrl, setValidatedUrl] = useState('');
   const [validatedParams, setValidatedParams] = useState({});
 
-  // Validate landing page on mount - AFTER page event fires
+  // Validate landing page on mount - fire page event AFTER getting v3 data
   useEffect(() => {
     const callValidateLandingPage = async () => {
       // Generate session ID first (before everything else)
       const generatedSessionId = await generateSessionId();
 
-      // Wait for analytics to be ready and send page event first
-      await new Promise((resolve) => {
-        const checkAnalytics = () => {
-          if (window.analytics && typeof window.analytics.page === 'function') {
-            // Send page view first with session ID
-            const urlParams = new URLSearchParams(window.location.search);
-            const pageData = {
-              // Page metadata
-              path: window.location.pathname || '',
-              referrer: document.referrer || '',
-              search: window.location.search || '',
-              title: document.title || '',
-              url: window.location.href || '',
-              category: window.location.href,
-              name: "Simple Sale Cash Offer",
-
-              // Platform and session
-              source_platform: 'homelight',
-              sessionId: generatedSessionId || '',
-              checkoutId: urlParams.get("checkoutId") || "28",
-              experiment_id: urlParams.get("eid") || '28',
-
-              // UTM parameters
-              utmContent: urlParams.get("utm_content") || '',
-              utmSource: urlParams.get("utm_source") || '',
-              utmMedium: urlParams.get("utm_medium") || '',
-              utmCampaign: urlParams.get("utm_campaign") || '',
-              utmTerm: urlParams.get("utm_term") || '',
-
-              // Prepopulated fields
-              prepop_email: urlParams.get("email") || '',
-              prepop_phone: urlParams.get("phone") || '',
-              prepop_name: urlParams.get("name") || '',
-              prepop_address: urlParams.get("address") || '',
-              prepop_street: urlParams.get("street") || '',
-              prepop_city: urlParams.get("city") || '',
-              prepop_state: urlParams.get("state") || '',
-              prepop_zip: urlParams.get("zip") || '',
-              prepop_fname: urlParams.get("fname") || '',
-              prepop_lname: urlParams.get("lname") || '',
-
-              // Status flags
-              address_chosen: 'no',
-            };
-            window.analytics.page(window.location.href, "Simple Sale Cash Offer", pageData);
-            resolve();
-          } else {
-            setTimeout(checkAnalytics, 100);
-          }
-        };
-        checkAnalytics();
-      });
-
-      // Now call landing page API after page event
+      // Get current URL parameters
       try {
-        // Get current URL parameters
         const urlParams = new URLSearchParams(window.location.search);
 
         // Build production URL for API (replace localhost with production domain)
@@ -84,14 +29,16 @@ function App() {
 
         let result;
         let apiSuccess = false;
+        let actualValidatedUrl = apiUrl;
+        let actualValidatedParams = {};
 
         try {
           result = await validateLandingPage(apiUrl);
           apiSuccess = true;
 
           // Extract the actual validated data from nested structure
-          let actualValidatedUrl = apiUrl;
-          let actualValidatedParams = {};
+          actualValidatedUrl = apiUrl;
+          actualValidatedParams = {};
 
           if (result && result.data) {
             // API returns nested structure: { data: { validatedUrl, validatedParams } }
@@ -153,68 +100,134 @@ function App() {
           setValidatedParams(paramsObj);
         }
 
-        // Fire quiz_start and partial_quiz_submit events regardless of API success
-        // This ensures events fire with prepopulated data even if API is unavailable
-        const fireQuizEvents = () => {
-          if (window.analytics && typeof window.analytics.track === 'function') {
-            // Build page data from validated URL or current URL
-            let pageData;
-            const sessionId = getSessionId();
+        // Build pageData for segment events (will be used for both page and quiz events)
+        let finalPageData;
+        const sessionId = getSessionId();
 
-            if (apiSuccess && result && result.data && result.data.validatedUrl) {
-              // Parse validated URL to extract query params
-              const validatedUrlObj = new URL(result.data.validatedUrl);
-              const validatedUrlParams = new URLSearchParams(validatedUrlObj.search);
+        if (apiSuccess && result && result.data && result.data.validatedUrl) {
+          // Parse validated URL to extract query params
+          const validatedUrlObj = new URL(result.data.validatedUrl);
+          const validatedUrlParams = new URLSearchParams(validatedUrlObj.search);
 
-              // Build pageData using validated params from API response
-              pageData = {
-                source_platform: 'homelight',
-                sessionId: sessionId || '',
-                checkoutId: validatedUrlParams.get("checkoutId") || "28",
-                utmContent: validatedUrlParams.get("utm_content") || sessionId || '',
-                experiment_id: validatedUrlParams.get("eid") || '28',
-                utmSource: validatedUrlParams.get("utm_source") || '',
-                utmMedium: validatedUrlParams.get("utm_medium") || '',
-                utmCampaign: validatedUrlParams.get("utm_campaign") || '',
-                utmTerm: validatedUrlParams.get("utm_term") || '',
-                prepop_email: validatedUrlParams.get("email") || '',
-                prepop_phone: validatedUrlParams.get("phone") || '',
-                prepop_name: validatedUrlParams.get("name") || '',
-                prepop_address: validatedUrlParams.get("address") || '',
-                prepop_street: validatedUrlParams.get("street") || '',
-                prepop_city: validatedUrlParams.get("city") || '',
-                prepop_state: validatedUrlParams.get("state") || '',
-                prepop_zip: validatedUrlParams.get("zip") || '',
-                prepop_fname: validatedUrlParams.get("fname") || '',
-                prepop_lname: validatedUrlParams.get("lname") || '',
-                address_chosen: 'prepopulated',
-                session_api_called: true,
-                session_api_status: 'success',
-                session_api_errorMessage: '',
-                api_validation_success: true,
-              };
+          // Build pageData using validated params from API response
+          finalPageData = {
+            // Page metadata
+            path: window.location.pathname || '',
+            referrer: document.referrer || '',
+            search: window.location.search || '',
+            title: document.title || '',
+            url: window.location.href || '',
+            category: window.location.href,
+            name: "Simple Sale Cash Offer",
 
-              // Add any additional validated params from response
-              if (result.data.validatedParams) {
-                pageData = { ...pageData, ...result.data.validatedParams };
-              }
-            } else {
-              // Use current browser URL params
-              pageData = buildPageData();
-              pageData.sessionId = sessionId || '';
-              pageData.address_chosen = 'default_params';
-              pageData.api_validation_success = false;
-            }
+            // Platform and session
+            source_platform: 'homelight',
+            sessionId: sessionId || '',
+            checkoutId: validatedUrlParams.get("checkoutId") || "28",
+            experiment_id: validatedUrlParams.get("eid") || '28',
+            utmContent: validatedUrlParams.get("utm_content") || sessionId || '',
+            utmSource: validatedUrlParams.get("utm_source") || '',
+            utmMedium: validatedUrlParams.get("utm_medium") || '',
+            utmCampaign: validatedUrlParams.get("utm_campaign") || '',
+            utmTerm: validatedUrlParams.get("utm_term") || '',
 
-            window.analytics.track("quiz_start", pageData);
-            window.analytics.track("partial_quiz_submit", pageData);
+            // Prepopulated fields - merge URL params with v3 data
+            prepop_email: validatedUrlParams.get("email") || actualValidatedParams.email || '',
+            prepop_phone: validatedUrlParams.get("phone") || actualValidatedParams.phone || '',
+            prepop_name: validatedUrlParams.get("name") || actualValidatedParams.name || '',
+            prepop_address: validatedUrlParams.get("address") || actualValidatedParams.address || '',
+            prepop_street: validatedUrlParams.get("street") || actualValidatedParams.street || '',
+            prepop_city: validatedUrlParams.get("city") || actualValidatedParams.city || '',
+            prepop_state: validatedUrlParams.get("state") || actualValidatedParams.state || '',
+            prepop_zip: validatedUrlParams.get("zip") || actualValidatedParams.zip || '',
+            prepop_fname: validatedUrlParams.get("fname") || '',
+            prepop_lname: validatedUrlParams.get("lname") || '',
+
+            // Status flags
+            address_chosen: 'prepopulated',
+            session_api_called: true,
+            session_api_status: 'success',
+            session_api_errorMessage: '',
+            api_validation_success: true,
+          };
+
+          // Add any additional validated params from response
+          if (result.data.validatedParams) {
+            finalPageData = { ...finalPageData, ...result.data.validatedParams };
+          }
+        } else {
+          // Use current browser URL params
+          finalPageData = {
+            // Page metadata
+            path: window.location.pathname || '',
+            referrer: document.referrer || '',
+            search: window.location.search || '',
+            title: document.title || '',
+            url: window.location.href || '',
+            category: window.location.href,
+            name: "Simple Sale Cash Offer",
+
+            // Platform and session
+            source_platform: 'homelight',
+            sessionId: sessionId || '',
+            checkoutId: urlParams.get("checkoutId") || "28",
+            experiment_id: urlParams.get("eid") || '28',
+            utmContent: urlParams.get("utm_content") || '',
+            utmSource: urlParams.get("utm_source") || '',
+            utmMedium: urlParams.get("utm_medium") || '',
+            utmCampaign: urlParams.get("utm_campaign") || '',
+            utmTerm: urlParams.get("utm_term") || '',
+
+            // Prepopulated fields
+            prepop_email: urlParams.get("email") || '',
+            prepop_phone: urlParams.get("phone") || '',
+            prepop_name: urlParams.get("name") || '',
+            prepop_address: urlParams.get("address") || '',
+            prepop_street: urlParams.get("street") || '',
+            prepop_city: urlParams.get("city") || '',
+            prepop_state: urlParams.get("state") || '',
+            prepop_zip: urlParams.get("zip") || '',
+            prepop_fname: urlParams.get("fname") || '',
+            prepop_lname: urlParams.get("lname") || '',
+
+            // Status flags
+            address_chosen: 'no',
+            session_api_called: false,
+            session_api_status: '',
+            session_api_errorMessage: '',
+            api_validation_success: false,
+          };
+        }
+
+        // Fire page event ONCE with all prepop properties
+        const firePageEvent = () => {
+          if (window.analytics && typeof window.analytics.page === 'function') {
+            window.analytics.page(window.location.href, "Simple Sale Cash Offer", finalPageData);
           } else {
-            setTimeout(fireQuizEvents, 100);
+            setTimeout(firePageEvent, 100);
           }
         };
+        firePageEvent();
 
-        // Fire events after processing (successful or not)
-        fireQuizEvents();
+        // Check if we should fire quiz events
+        // Only fire if address exists in URL params OR v3 response
+        const hasAddressInUrl = urlParams.get("address");
+        const hasAddressInV3 = result?.data?.[0]?._source?.address;
+        const shouldFireQuizEvents = hasAddressInUrl || hasAddressInV3;
+
+        // Fire quiz_start and partial_quiz_submit events only if address is present
+        if (shouldFireQuizEvents) {
+          const fireQuizEvents = () => {
+            if (window.analytics && typeof window.analytics.track === 'function') {
+              // Use the same pageData we built for the page event
+              window.analytics.track("quiz_start", finalPageData);
+              window.analytics.track("partial_quiz_submit", finalPageData);
+            } else {
+              setTimeout(fireQuizEvents, 100);
+            }
+          };
+          fireQuizEvents();
+        }
       } catch (error) {
         // Handle unexpected errors silently
       }
