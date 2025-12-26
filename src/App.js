@@ -2,10 +2,180 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import HomePage from './components/Homepage/pages';
 import { validateLandingPage, generateSessionId, getSessionId } from './utils/api';
+import { sendSegmentPageEvent, waitForAnalytics } from './utils/analytics';
+
+// Validate if a parameter is "real" (not placeholder/empty)
+function isValidParam(val) {
+  if (!val || typeof val !== 'string') return false;
+  val = decodeURIComponent(val.trim());
+
+  // Reject placeholders, empty, or HTML-like values
+  if (val === '' || val.startsWith('<') || val.endsWith('>') || val.includes('PLACEHOLDER') || val.includes('placeholder')) {
+    return false;
+  }
+
+  // Reject values that are wrapped in angle brackets (e.g., <FNAME>, <EMAIL>)
+  if (val.match(/^<[A-Z_]+>$/i)) {
+    return false;
+  }
+
+  return true;
+}
 
 function App() {
   const [validatedUrl, setValidatedUrl] = useState('');
   const [validatedParams, setValidatedParams] = useState({});
+
+  // Request geolocation permission on page load
+  useEffect(() => {
+    const requestGeolocation = async () => {
+      console.log('🌍 Geolocation: Starting request...');
+
+      // Initialize with default "no" state before any action
+      window.geolocationData = {
+        geolocation_address: '',
+        geolocation_lat: '',
+        geolocation_long: '',
+        geolocation_permission: 'user_disabled',
+        geolocation_triggered: 'no'
+      };
+
+      if (!navigator.geolocation) {
+        console.log('❌ Geolocation: Not supported by browser');
+        window.geolocationData = {
+          geolocation_address: '',
+          geolocation_lat: '',
+          geolocation_long: '',
+          geolocation_permission: 'not_supported',
+          geolocation_triggered: 'yes'
+        };
+        return;
+      }
+
+      // Check permission status first using Permissions API
+      if (navigator.permissions && navigator.permissions.query) {
+        try {
+          const permissionStatus = await navigator.permissions.query({ name: 'geolocation' });
+          console.log('🔐 Current permission state:', permissionStatus.state);
+
+          if (permissionStatus.state === 'denied') {
+            console.log('🚫 Geolocation: Permission already denied by user');
+            window.geolocationData = {
+              geolocation_address: '',
+              geolocation_lat: '',
+              geolocation_long: '',
+              geolocation_permission: 'denied',
+              geolocation_triggered: 'yes'
+            };
+            return;
+          }
+        } catch (err) {
+          console.log('⚠️ Could not check permission status:', err);
+        }
+      }
+
+      console.log('🌍 Geolocation: Requesting position...');
+
+      // Add small delay to ensure page is fully loaded
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Request current position - this triggers the permission prompt
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          // User GRANTED permission
+          console.log('✅ Geolocation: Permission granted', position.coords);
+          const { latitude, longitude } = position.coords;
+
+          // Reverse geocode to get address from coordinates
+          try {
+            console.log('🗺️ Geolocation: Reverse geocoding coordinates...');
+            const mapboxToken = 'pk.eyJ1IjoicmFtZWVuIiwiYSI6ImNtZ3VrdTR0eDBmbzYya3I3cjIwbnNzOHIifQ.YaGIyU6YCDj1c4MKJZahcA';
+            const response = await fetch(
+              `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${mapboxToken}&types=place,locality,neighborhood,address`
+            );
+            const data = await response.json();
+            console.log('🗺️ Mapbox response:', data);
+
+            if (data.features && data.features.length > 0) {
+              // Get the most specific location available (could be address, place, or city)
+              const addressText = data.features[0].place_name.replace(/, United States$/, '');
+              console.log('✅ Geolocation: Address found:', addressText);
+              console.log('📍 Location type:', data.features[0].place_type);
+
+              // Update with successful geolocation data
+              window.geolocationData = {
+                geolocation_address: addressText,
+                geolocation_lat: latitude.toString(),
+                geolocation_long: longitude.toString(),
+                geolocation_permission: 'granted',
+                geolocation_triggered: 'yes'
+              };
+
+              console.log('✅ Geolocation: Data saved. Auto-redirect disabled for testing.');
+
+              // TODO: Enable auto-redirect in production
+              // const timestamp = Date.now();
+              // const encodedAddress = encodeURIComponent(addressText);
+              // const redirectUrl = `https://www.homelight.com/simple-sale/quiz?interested_in_agent=true&address=${encodedAddress}&timestamp=${timestamp}&geolocation=true#/qaas=0/`;
+              // setTimeout(() => {
+              //   window.location.href = redirectUrl;
+              // }, 500);
+            } else {
+              console.log('⚠️ Geolocation: No address found for coordinates');
+              // Got coordinates but couldn't get address
+              window.geolocationData = {
+                geolocation_address: '',
+                geolocation_lat: latitude.toString(),
+                geolocation_long: longitude.toString(),
+                geolocation_permission: 'granted',
+                geolocation_triggered: 'yes'
+              };
+            }
+          } catch (error) {
+            console.error('❌ Geolocation: Reverse geocoding failed', error);
+            // Reverse geocoding failed
+            window.geolocationData = {
+              geolocation_address: '',
+              geolocation_lat: latitude.toString(),
+              geolocation_long: longitude.toString(),
+              geolocation_permission: 'granted',
+              geolocation_triggered: 'yes'
+            };
+          }
+        },
+        (error) => {
+          // User DENIED permission or other error occurred
+          console.error('❌ Geolocation: Error', error);
+          let permissionStatus = 'user_disabled';
+          if (error.code === error.PERMISSION_DENIED) {
+            permissionStatus = 'denied';
+            console.log('🚫 Geolocation: Permission denied by user');
+          } else if (error.code === error.POSITION_UNAVAILABLE) {
+            permissionStatus = 'unavailable';
+            console.log('⚠️ Geolocation: Position unavailable');
+          } else if (error.code === error.TIMEOUT) {
+            permissionStatus = 'timeout';
+            console.log('⏱️ Geolocation: Request timeout');
+          }
+
+          window.geolocationData = {
+            geolocation_address: '',
+            geolocation_lat: '',
+            geolocation_long: '',
+            geolocation_permission: permissionStatus,
+            geolocation_triggered: 'yes'
+          };
+        },
+        {
+          enableHighAccuracy: false,
+          timeout: 10000,
+          maximumAge: 0
+        }
+      );
+    };
+
+    requestGeolocation();
+  }, []);
 
   // Validate landing page on mount - fire page event AFTER getting v3 data
   useEffect(() => {
@@ -28,13 +198,11 @@ function App() {
           : `${window.location.origin}${window.location.pathname}${queryString ? '?' + queryString : ''}`;
 
         let result;
-        let apiSuccess = false;
         let actualValidatedUrl = apiUrl;
         let actualValidatedParams = {};
 
         try {
           result = await validateLandingPage(apiUrl);
-          apiSuccess = true;
 
           // Extract the actual validated data from nested structure
           actualValidatedUrl = apiUrl;
@@ -55,14 +223,14 @@ function App() {
             const sourceData = result.data[0]._source;
             actualValidatedParams = {
               ...actualValidatedParams,
-              name: sourceData.name || actualValidatedParams.name || '',
-              phone: sourceData.phone || actualValidatedParams.phone || '',
-              email: sourceData.email || actualValidatedParams.email || '',
-              address: sourceData.address || actualValidatedParams.address || '',
-              street: sourceData.street || actualValidatedParams.street || '',
-              city: sourceData.city || actualValidatedParams.city || '',
-              state: sourceData.state || actualValidatedParams.state || '',
-              zip: sourceData.zip || actualValidatedParams.zip || '',
+              name: isValidParam(sourceData.name) ? sourceData.name : (isValidParam(actualValidatedParams.name) ? actualValidatedParams.name : ''),
+              phone: isValidParam(sourceData.phone) ? sourceData.phone : (isValidParam(actualValidatedParams.phone) ? actualValidatedParams.phone : ''),
+              email: isValidParam(sourceData.email) ? sourceData.email : (isValidParam(actualValidatedParams.email) ? actualValidatedParams.email : ''),
+              address: isValidParam(sourceData.address) ? sourceData.address : (isValidParam(actualValidatedParams.address) ? actualValidatedParams.address : ''),
+              street: isValidParam(sourceData.street) ? sourceData.street : (isValidParam(actualValidatedParams.street) ? actualValidatedParams.street : ''),
+              city: isValidParam(sourceData.city) ? sourceData.city : (isValidParam(actualValidatedParams.city) ? actualValidatedParams.city : ''),
+              state: isValidParam(sourceData.state) ? sourceData.state : (isValidParam(actualValidatedParams.state) ? actualValidatedParams.state : ''),
+              zip: isValidParam(sourceData.zip) ? sourceData.zip : (isValidParam(actualValidatedParams.zip) ? actualValidatedParams.zip : ''),
             };
           }
 
@@ -90,124 +258,62 @@ function App() {
           }
         } catch (error) {
           // Set state with current URL even if API fails
-          // Parse params from current URL since API failed
+          // Parse params from current URL since API failed (validate params)
           const currentParams = new URLSearchParams(window.location.search);
           const paramsObj = {};
           for (let [key, value] of currentParams) {
-            paramsObj[key] = value;
+            // Only set param if it's valid, otherwise set to empty string
+            paramsObj[key] = isValidParam(value) ? value : '';
           }
           setValidatedUrl(apiUrl);
           setValidatedParams(paramsObj);
         }
 
-        // Build pageData for segment events (will be used for both page and quiz events)
-        let finalPageData;
+        // Track invalid fields and build validated URL
         const sessionId = getSessionId();
+        const invalidFields = [];
 
-        if (apiSuccess && result && result.data && result.data.validatedUrl) {
-          // Parse validated URL to extract query params
-          const validatedUrlObj = new URL(result.data.validatedUrl);
-          const validatedUrlParams = new URLSearchParams(validatedUrlObj.search);
-
-          // Build pageData using validated params from API response
-          finalPageData = {
-            // Page metadata
-            path: window.location.pathname || '',
-            referrer: document.referrer || '',
-            search: window.location.search || '',
-            title: document.title || '',
-            url: window.location.href || '',
-            category: window.location.href,
-            name: "Simple Sale Cash Offer",
-
-            // Platform and session
-            source_platform: 'homelight',
-            sessionId: sessionId || '',
-            checkoutId: validatedUrlParams.get("checkoutId") || "28",
-            experiment_id: validatedUrlParams.get("eid") || '28',
-            utmContent: validatedUrlParams.get("utm_content") || sessionId || '',
-            utmSource: validatedUrlParams.get("utm_source") || '',
-            utmMedium: validatedUrlParams.get("utm_medium") || '',
-            utmCampaign: validatedUrlParams.get("utm_campaign") || '',
-            utmTerm: validatedUrlParams.get("utm_term") || '',
-
-            // Prepopulated fields - merge URL params with v3 data
-            prepop_email: validatedUrlParams.get("email") || actualValidatedParams.email || '',
-            prepop_phone: validatedUrlParams.get("phone") || actualValidatedParams.phone || '',
-            prepop_name: validatedUrlParams.get("name") || actualValidatedParams.name || '',
-            prepop_address: validatedUrlParams.get("address") || actualValidatedParams.address || '',
-            prepop_street: validatedUrlParams.get("street") || actualValidatedParams.street || '',
-            prepop_city: validatedUrlParams.get("city") || actualValidatedParams.city || '',
-            prepop_state: validatedUrlParams.get("state") || actualValidatedParams.state || '',
-            prepop_zip: validatedUrlParams.get("zip") || actualValidatedParams.zip || '',
-            prepop_fname: validatedUrlParams.get("fname") || '',
-            prepop_lname: validatedUrlParams.get("lname") || '',
-
-            // Status flags
-            address_chosen: 'prepopulated',
-            session_api_called: true,
-            session_api_status: 'success',
-            session_api_errorMessage: '',
-            api_validation_success: true,
-          };
-
-          // Add any additional validated params from response
-          if (result.data.validatedParams) {
-            finalPageData = { ...finalPageData, ...result.data.validatedParams };
+        // Check each param and track if invalid
+        const paramsToCheck = ['fname', 'lname', 'name', 'email', 'phone', 'street', 'city', 'state', 'zip', 'address'];
+        paramsToCheck.forEach(param => {
+          const value = urlParams.get(param);
+          if (value && !isValidParam(value)) {
+            invalidFields.push(param);
           }
-        } else {
-          // Use current browser URL params
-          finalPageData = {
-            // Page metadata
-            path: window.location.pathname || '',
-            referrer: document.referrer || '',
-            search: window.location.search || '',
-            title: document.title || '',
-            url: window.location.href || '',
-            category: window.location.href,
-            name: "Simple Sale Cash Offer",
+        });
 
-            // Platform and session
-            source_platform: 'homelight',
-            sessionId: sessionId || '',
-            checkoutId: urlParams.get("checkoutId") || "28",
-            experiment_id: urlParams.get("eid") || '28',
-            utmContent: urlParams.get("utm_content") || '',
-            utmSource: urlParams.get("utm_source") || '',
-            utmMedium: urlParams.get("utm_medium") || '',
-            utmCampaign: urlParams.get("utm_campaign") || '',
-            utmTerm: urlParams.get("utm_term") || '',
+        // Build validated URL with empty values for invalid params
+        const validatedUrlParamsNew = new URLSearchParams(urlParams);
+        invalidFields.forEach(field => {
+          validatedUrlParamsNew.set(field, ''); // Set invalid fields to empty
+        });
+        const builtValidatedUrl = `${window.location.origin}${window.location.pathname}?${validatedUrlParamsNew.toString()}`;
 
-            // Prepopulated fields
-            prepop_email: urlParams.get("email") || '',
-            prepop_phone: urlParams.get("phone") || '',
-            prepop_name: urlParams.get("name") || '',
-            prepop_address: urlParams.get("address") || '',
-            prepop_street: urlParams.get("street") || '',
-            prepop_city: urlParams.get("city") || '',
-            prepop_state: urlParams.get("state") || '',
-            prepop_zip: urlParams.get("zip") || '',
-            prepop_fname: urlParams.get("fname") || '',
-            prepop_lname: urlParams.get("lname") || '',
-
-            // Status flags
-            address_chosen: 'no',
-            session_api_called: false,
-            session_api_status: '',
-            session_api_errorMessage: '',
-            api_validation_success: false,
+        // Extract identity API data from v3 response
+        let identityApiData = {};
+        if (result?.data?.[0]?._source) {
+          const sourceData = result.data[0]._source;
+          identityApiData = {
+            ip: '', // IP would come from backend
+            identity_api_source: 'address_internal',
+            identity_api_res: result.data[0],
+            identity_checkout_category: (sourceData.name && sourceData.email && sourceData.phone && sourceData.address)
+              ? 'all_data_present'
+              : 'partial_data',
           };
         }
 
-        // Fire page event ONCE with all prepop properties
-        const firePageEvent = () => {
-          if (window.analytics && typeof window.analytics.page === 'function') {
-            window.analytics.page(window.location.href, "Simple Sale Cash Offer", finalPageData);
-          } else {
-            setTimeout(firePageEvent, 100);
-          }
-        };
-        firePageEvent();
+        // Get current geolocation data
+        const currentGeoData = window.geolocationData || null;
+
+        // Fire page event with new analytics structure
+        sendSegmentPageEvent(
+          sessionId,
+          invalidFields,
+          builtValidatedUrl,
+          currentGeoData,
+          identityApiData
+        );
 
         // Check if we should fire quiz events
         // Only fire if address exists in URL params OR v3 response
@@ -217,16 +323,14 @@ function App() {
 
         // Fire quiz_start and partial_quiz_submit events only if address is present
         if (shouldFireQuizEvents) {
-          const fireQuizEvents = () => {
-            if (window.analytics && typeof window.analytics.track === 'function') {
-              // Use the same pageData we built for the page event
-              window.analytics.track("quiz_start", finalPageData);
-              window.analytics.track("partial_quiz_submit", finalPageData);
-            } else {
-              setTimeout(fireQuizEvents, 100);
-            }
-          };
-          fireQuizEvents();
+          waitForAnalytics(() => {
+            window.analytics.track("quiz_start", {
+              ...identityApiData,
+            });
+            window.analytics.track("partial_quiz_submit", {
+              ...identityApiData,
+            });
+          });
         }
       } catch (error) {
         // Handle unexpected errors silently

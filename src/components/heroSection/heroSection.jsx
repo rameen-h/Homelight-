@@ -2,6 +2,24 @@ import React, { useEffect, useRef, useState } from "react";
 import "./heroSection.css";
 import { buildPageData } from "../../utils/analytics";
 
+// Validate if a parameter is "real" (not placeholder/empty)
+function isValidParam(val) {
+  if (!val || typeof val !== 'string') return false;
+  val = decodeURIComponent(val.trim());
+
+  // Reject placeholders, empty, or HTML-like values
+  if (val === '' || val.startsWith('<') || val.endsWith('>') || val.includes('PLACEHOLDER') || val.includes('placeholder')) {
+    return false;
+  }
+
+  // Reject values that are wrapped in angle brackets (e.g., <FNAME>, <EMAIL>)
+  if (val.match(/^<[A-Z_]+>$/i)) {
+    return false;
+  }
+
+  return true;
+}
+
 const PromoSection = ({ validatedParams, validatedUrl }) => {
   const geocoderContainerRef = useRef(null);
   const geocoderRef = useRef(null);
@@ -225,17 +243,40 @@ const PromoSection = ({ validatedParams, validatedUrl }) => {
       // Try to get full address first, or build from parts
       let fullAddress = validatedParams.address || validatedParams.prepop_address || '';
 
+      // Validate the full address before using it
+      if (fullAddress && !isValidParam(fullAddress)) {
+        console.log('🚫 Invalid full address detected, ignoring:', fullAddress);
+        fullAddress = '';
+      }
+
       if (!fullAddress) {
-        // Build address from individual parts
+        // Build address from individual parts, but validate each part first
         const street = validatedParams.street || validatedParams.prepop_street || '';
         const city = validatedParams.city || validatedParams.prepop_city || '';
         const state = validatedParams.state || validatedParams.prepop_state || '';
         const zip = validatedParams.zip || validatedParams.prepop_zip || '';
 
-        // Store original params for comparison
-        originalParamsRef.current = { street, city, state, zip };
+        // Validate each part before using
+        const validStreet = isValidParam(street) ? street : '';
+        const validCity = isValidParam(city) ? city : '';
+        const validState = isValidParam(state) ? state : '';
+        const validZip = isValidParam(zip) ? zip : '';
 
-        const addressParts = [street, city, state, zip].filter(Boolean);
+        // Log any invalid parts
+        if (street && !validStreet) console.log('🚫 Invalid street detected, ignoring:', street);
+        if (city && !validCity) console.log('🚫 Invalid city detected, ignoring:', city);
+        if (state && !validState) console.log('🚫 Invalid state detected, ignoring:', state);
+        if (zip && !validZip) console.log('🚫 Invalid zip detected, ignoring:', zip);
+
+        // Store original params for comparison (only if valid)
+        originalParamsRef.current = {
+          street: validStreet,
+          city: validCity,
+          state: validState,
+          zip: validZip
+        };
+
+        const addressParts = [validStreet, validCity, validState, validZip].filter(Boolean);
         fullAddress = addressParts.join(', ');
       }
 
@@ -244,6 +285,9 @@ const PromoSection = ({ validatedParams, validatedUrl }) => {
         fullAddress = fullAddress.replace(/,?\s*United States\s*$/i, '').trim();
         geocoderInputRef.current.value = fullAddress;
         addressChosenMethod.current = "prepopulated";
+        console.log('✅ Address prepopulated:', fullAddress);
+      } else {
+        console.log('ℹ️ No valid address to prepopulate');
       }
     }
   }, [validatedParams]);

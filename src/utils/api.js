@@ -5,6 +5,28 @@
 const API_BASE_URL = 'https://api.palisade.ai';
 
 /**
+ * Validate if a parameter is "real" (not placeholder/empty)
+ * @param {string} val - The value to validate
+ * @returns {boolean} True if valid, false if invalid/placeholder
+ */
+const isValidParam = (val) => {
+  if (!val || typeof val !== 'string') return false;
+  val = decodeURIComponent(val.trim());
+
+  // Reject placeholders, empty, or HTML-like values
+  if (val === '' || val.startsWith('<') || val.endsWith('>') || val.includes('PLACEHOLDER') || val.includes('placeholder')) {
+    return false;
+  }
+
+  // Reject values that are wrapped in angle brackets (e.g., <FNAME>, <EMAIL>)
+  if (val.match(/^<[A-Z_]+>$/i)) {
+    return false;
+  }
+
+  return true;
+};
+
+/**
  * Call partial match API for additional information
  * @param {Object} params - Parameters for the partial match API
  * @returns {Promise<Object>} Response from partial match API
@@ -26,6 +48,12 @@ const callPartialMatchApi = async (params) => {
   }
 
   const data = await response.json();
+
+  // If API returns error about missing parameters, return empty result instead
+  if (data?.error && data?.message?.includes('Please provide at least one search parameter')) {
+    return { data: [] };
+  }
+
   return data;
 };
 
@@ -162,6 +190,17 @@ export const validateLandingPage = async (currentUrl) => {
           : "partial_data_present";
     }
 
+    // Parse URL parameters to check for invalid/placeholder values
+    const urlParams = new URLSearchParams(new URL(urlToSend).search);
+
+    // Check if any URL parameters contain invalid/placeholder values
+    const paramsToCheck = ['fname', 'lname', 'name', 'email', 'phone', 'street', 'city', 'state', 'zip', 'address'];
+    const hasInvalidParams = paramsToCheck.some(param => {
+      const value = urlParams.get(param);
+      // Check if param exists in URL (even if empty) and is invalid
+      return value !== null && !isValidParam(value);
+    });
+
     // Check if landing page API response has incomplete data
     // Call v3 if missing any of name, phone, or email
     const source = data?.data?.[0]?._source || {};
@@ -170,26 +209,39 @@ export const validateLandingPage = async (currentUrl) => {
     const hasEmail = source.email && source.email.trim() !== '';
     const hasAllFields = hasName && hasPhone && hasEmail;
 
-    if (!hasAllFields) {
+    // Check if geolocation is enabled and has address data
+    const geoData = window?.geolocationData || null;
+    const hasGeolocationAddress = geoData?.geolocation_permission === 'granted' && geoData?.geolocation_address;
+
+    // Trigger v3 API if:
+    // 1. Response has incomplete data (!hasAllFields)
+    // 2. OR URL contains invalid/placeholder parameters (hasInvalidParams)
+    // 3. OR geolocation is enabled with address but data is still missing (hasGeolocationAddress && !hasAllFields)
+    if (!hasAllFields || hasInvalidParams || (hasGeolocationAddress && !hasAllFields)) {
       // Keep original _index
       const originalIndex = data?.data?.[0]?._index;
 
-      // Parse URL for parameters
-      const urlParams = new URLSearchParams(new URL(urlToSend).search);
-      const address = window?.addressVal || urlParams.get('address') || '';
+      // Extract parameters for v3 API call (urlParams already parsed above)
+      // Use geolocation address if params are empty/invalid and geolocation is available
+      let address = window?.addressVal || urlParams.get('address') || '';
+      if ((!address || !isValidParam(address)) && hasGeolocationAddress) {
+        address = geoData.geolocation_address;
+      }
+
       const name = urlParams.get('name') || source.name || '';
       const phone = urlParams.get('phone') || source.phone || '';
       const email = urlParams.get('email') || source.email || '';
 
-      // Call partial match API if we have at least one parameter (address, name, phone, or email)
-      if (address || name || phone || email) {
-        try {
-          const partialMatchData = await callPartialMatchApi({
-            address: address,
-            name: name,
-            phone: phone,
-            email: email,
-          });
+      // Always try to call v3 API when data is incomplete
+      // Even if all params are empty, v3 might find something based on available data
+      // The API will return empty results if nothing is found, which is acceptable
+      try {
+        const partialMatchData = await callPartialMatchApi({
+          address: address,
+          name: name,
+          phone: phone,
+          email: email,
+        });
 
           // Merge data, preferring partial match API results
           if (partialMatchData?.data?.[0]) {
@@ -231,9 +283,8 @@ export const validateLandingPage = async (currentUrl) => {
               data.identity_api_source = indexName === "data_axle" ? "address_dataaxle" : "address_internal";
             }
           }
-        } catch (partialError) {
-          // Continue with original data if partial match fails
-        }
+      } catch (partialError) {
+        // Continue with original data if partial match fails
       }
     }
 

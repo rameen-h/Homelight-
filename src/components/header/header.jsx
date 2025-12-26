@@ -57,15 +57,15 @@ const Header = () => {
         <div className="menu-logo">
           <a className="header-logo-component" href="/">
             <img
-              alt="Trusted Home Offers Logo"
+              alt="Homelight Logo"
               className={`logo top ${!scrolled ? "show" : ""}`}
-              src="https://www.trustedhomeoffers.org/assets/images/webp/trusted-home-offers-asotv.png"
+              src="/logo_normal.png"
               width="153"
             />
             <img
-              alt="Trusted Home Offers Logo"
+              alt="Homelight Logo"
               className={`logo scrolled ${scrolled ? "show" : ""}`}
-              src="https://www.trustedhomeoffers.org/assets/images/webp/trusted-home-offers-asotv.png"
+              src="/logo-new.png"
               width="153"
             />
           </a>

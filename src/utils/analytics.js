@@ -1,6 +1,6 @@
 /**
  * Analytics utility functions for Segment tracking
- * Mirrors SimpleSale property names and structure
+ * Matches manager's specified structure
  */
 
 /**
@@ -18,11 +18,11 @@ export const waitForAnalytics = (callback, retry = 0) => {
 
 
 /**
- * Build page data object with SimpleSale property names
- * This matches the exact structure from SimpleSale for consistency
+ * Build page data object matching manager's exact structure
  */
-export const buildPageData = (sessionId = '', status = '', errorMessage = '', apiHitStatus = false) => {
-  const parser = new URL(window.location.href);
+export const buildPageData = (sessionId = '', invalidFields = [], validatedUrl = '', geolocationData = null, additionalData = {}) => {
+  const currentUrl = window.location.href;
+  const parser = new URL(currentUrl);
   const searchParams = parser.searchParams;
 
   // Get session ID from parameter, sessionStorage, or window
@@ -32,23 +32,50 @@ export const buildPageData = (sessionId = '', status = '', errorMessage = '', ap
                          searchParams.get("sessionId") ||
                          '';
 
+  // Get geolocation data from parameter or window global state
+  // Default to window.geolocationData which is set by App.js based on actual permission state
+  const geoData = geolocationData || window.geolocationData || null;
+
+  // If no geolocation data available, use defaults
+  const finalGeoData = geoData ? geoData : {
+    geolocation_address: '',
+    geolocation_lat: '',
+    geolocation_long: '',
+    geolocation_permission: 'user_disabled',
+    geolocation_triggered: 'no'
+  };
+
+  // Build URL without parameters
+  const urlWithoutParam = `${parser.protocol}//${parser.host}${parser.pathname}`;
+
   return {
-    // Platform identifier
-    source_platform: 'homelight',
+    // Page metadata
+    title: document.title || 'Sell your house fast with Trusted Home Reports',
+    domain: `${parser.protocol}//${parser.host}`,
+    url: currentUrl,
+    path: parser.pathname,
+    url_without_param: urlWithoutParam,
+    userAgent: navigator.userAgent,
+    locale: navigator.language || 'en-US',
+    search: parser.search,
+    referrer: document.referrer || '',
 
     // Session tracking
     sessionId: finalSessionId,
-    checkoutId: searchParams.get("checkoutId") || "28",
-    utmContent: searchParams.get("utm_content") || finalSessionId,
-    experiment_id: searchParams.get("eid") || '28',
+    affid: searchParams.get("affid") || '',
+    userId: '',
 
-    // UTM Parameters (camelCase to match SimpleSale exactly)
+    // UTM Parameters
     utmSource: searchParams.get("utm_source") || '',
     utmMedium: searchParams.get("utm_medium") || '',
     utmCampaign: searchParams.get("utm_campaign") || '',
     utmTerm: searchParams.get("utm_term") || '',
+    utmContent: searchParams.get("utm_content") || finalSessionId,
+    tuneId: searchParams.get("tuneId") || '',
+    fbclid: searchParams.get("fbclid") || '',
+    gclid: searchParams.get("gclid") || '',
 
-    // Prepopulated fields (exact SimpleSale naming)
+    // Prepopulated fields (from URL params - RAW values, not validated)
     prepop_email: searchParams.get("email") || '',
     prepop_phone: searchParams.get("phone") || '',
     prepop_name: searchParams.get("name") || '',
@@ -60,25 +87,55 @@ export const buildPageData = (sessionId = '', status = '', errorMessage = '', ap
     prepop_fname: searchParams.get("fname") || '',
     prepop_lname: searchParams.get("lname") || '',
 
+    // Quiz fields (empty initially, filled when user submits)
+    quiz_address: '',
+    quiz_name: '',
+    quiz_email: '',
+    quiz_phone: '',
+    quiz_firstname: '',
+    quiz_lastname: '',
+
+    // Geolocation fields
+    geolocation_address: finalGeoData.geolocation_address || '',
+    geolocation_lat: finalGeoData.geolocation_lat || '',
+    geolocation_long: finalGeoData.geolocation_long || '',
+    geolocation_permission: finalGeoData.geolocation_permission || 'user_disabled',
+    geolocation_triggered: finalGeoData.geolocation_triggered || 'no',
+
     // Status flags
     address_chosen: 'no',
-    session_api_called: apiHitStatus,
-    session_api_status: status,
-    session_api_errorMessage: errorMessage,
+
+    // Invalid fields tracking
+    invalid_fields: invalidFields,
+    validated_url: validatedUrl || currentUrl,
+
+    // Identity API fields (populated from v3 API response)
+    ip: '',
+    identity_api_source: '',
+    identity_api_res: null,
+    identity_checkout_category: '',
+
+    // Merge any additional data passed in
+    ...additionalData
   };
 };
 
 /**
  * Send Segment page view event
- * Page name: "Simple Sale Cash Offer" (matches SimpleSale)
+ * Page name: "Trusted Home Offers" (as per manager's spec)
  */
-export const sendSegmentPageEvent = (sessionId = '', status = '', errorMessage = '', apiHitStatus = false) => {
-  const pageData = buildPageData(sessionId, status, errorMessage, apiHitStatus);
+export const sendSegmentPageEvent = (sessionId = '', invalidFields = [], validatedUrl = '', geolocationData = null, additionalData = {}) => {
+  const pageData = buildPageData(sessionId, invalidFields, validatedUrl, geolocationData, {
+    entry: true, // First page load
+    category: window.location.href,
+    name: 'Trusted Home Reports',
+    ...additionalData
+  });
 
   console.log('🔵 Tracking Page View:', pageData);
 
   waitForAnalytics(() => {
-    window.analytics.page(window.location.href, "Simple Sale Cash Offer", pageData);
+    window.analytics.page(window.location.href, "Trusted Home Reports", pageData);
     console.log('✅ Page View Sent to Segment');
   });
 };
@@ -107,4 +164,3 @@ export const trackButtonClick = (buttonText, additionalData = {}) => {
     ...additionalData
   });
 };
-
