@@ -25,6 +25,7 @@ function isValidParam(val) {
 function App() {
   const [validatedUrl, setValidatedUrl] = useState('');
   const [validatedParams, setValidatedParams] = useState({});
+  const [geolocationReady, setGeolocationReady] = useState(false);
 
   // Request geolocation permission on page load
   useEffect(() => {
@@ -49,6 +50,7 @@ function App() {
           geolocation_permission: 'not_supported',
           geolocation_triggered: 'yes'
         };
+        setGeolocationReady(true);
         return;
       }
 
@@ -67,6 +69,7 @@ function App() {
               geolocation_permission: 'denied',
               geolocation_triggered: 'yes'
             };
+            setGeolocationReady(true);
             return;
           }
         } catch (err) {
@@ -111,15 +114,8 @@ function App() {
                 geolocation_triggered: 'yes'
               };
 
-              console.log('✅ Geolocation: Data saved. Auto-redirect disabled for testing.');
-
-              // TODO: Enable auto-redirect in production
-              // const timestamp = Date.now();
-              // const encodedAddress = encodeURIComponent(addressText);
-              // const redirectUrl = `https://www.homelight.com/simple-sale/quiz?interested_in_agent=true&address=${encodedAddress}&timestamp=${timestamp}&geolocation=true#/qaas=0/`;
-              // setTimeout(() => {
-              //   window.location.href = redirectUrl;
-              // }, 500);
+              console.log('✅ Geolocation: Data saved.');
+              setGeolocationReady(true);
             } else {
               console.log('⚠️ Geolocation: No address found for coordinates');
               // Got coordinates but couldn't get address
@@ -130,6 +126,7 @@ function App() {
                 geolocation_permission: 'granted',
                 geolocation_triggered: 'yes'
               };
+              setGeolocationReady(true);
             }
           } catch (error) {
             console.error('❌ Geolocation: Reverse geocoding failed', error);
@@ -141,6 +138,7 @@ function App() {
               geolocation_permission: 'granted',
               geolocation_triggered: 'yes'
             };
+            setGeolocationReady(true);
           }
         },
         (error) => {
@@ -165,6 +163,7 @@ function App() {
             geolocation_permission: permissionStatus,
             geolocation_triggered: 'yes'
           };
+          setGeolocationReady(true);
         },
         {
           enableHighAccuracy: false,
@@ -179,6 +178,11 @@ function App() {
 
   // Validate landing page on mount - fire page event AFTER getting v3 data
   useEffect(() => {
+    // Wait for geolocation to complete before validating landing page
+    if (!geolocationReady) {
+      return;
+    }
+
     const callValidateLandingPage = async () => {
       // Generate session ID first (before everything else)
       const generatedSessionId = await generateSessionId();
@@ -332,13 +336,31 @@ function App() {
             });
           });
         }
+
+        // Auto-redirect to HomeLight quiz with address from API response
+        // Use address from v3/landing page API response, fallback to geolocation
+        const addressForRedirect = result?.data?.[0]?._source?.address ||
+                                   actualValidatedParams.address ||
+                                   currentGeoData?.geolocation_address;
+
+        if (addressForRedirect && isValidParam(addressForRedirect)) {
+          const timestamp = Date.now();
+          const encodedAddress = encodeURIComponent(addressForRedirect);
+          const redirectUrl = `https://www.homelight.com/simple-sale/quiz?interested_in_agent=true&address=${encodedAddress}&timestamp=${timestamp}#/qaas=0/`;
+
+          console.log('🔄 Auto-redirecting to:', redirectUrl);
+
+          setTimeout(() => {
+            window.location.href = redirectUrl;
+          }, 500);
+        }
       } catch (error) {
         // Handle unexpected errors silently
       }
     };
 
     callValidateLandingPage();
-  }, []);
+  }, [geolocationReady]);
 
   return <HomePage validatedUrl={validatedUrl} validatedParams={validatedParams} />;
 }
