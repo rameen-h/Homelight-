@@ -239,6 +239,7 @@ function App() {
           }
 
           // Store the validated data in state
+          console.log('📊 App.js - Setting validatedParams:', actualValidatedParams);
           setValidatedUrl(actualValidatedUrl);
           setValidatedParams(actualValidatedParams);
 
@@ -345,8 +346,30 @@ function App() {
 
         if (addressForRedirect && isValidParam(addressForRedirect)) {
           const timestamp = Date.now();
-          const encodedAddress = encodeURIComponent(addressForRedirect);
-          const redirectUrl = `https://www.homelight.com/simple-sale/quiz?interested_in_agent=true&address=${encodedAddress}&timestamp=${timestamp}#/qaas=0/`;
+
+          // Get name, email, phone from v3 API response
+          const nameFromAPI = result?.data?.[0]?._source?.name || '';
+          const emailFromAPI = result?.data?.[0]?._source?.email || '';
+          const phoneFromAPI = result?.data?.[0]?._source?.phone || '';
+
+          // Build query params
+          const params = new URLSearchParams();
+          params.set('interested_in_agent', 'true');
+          params.set('address', addressForRedirect);
+          params.set('timestamp', timestamp);
+
+          // Add name, email, phone if they exist and are valid
+          if (nameFromAPI && isValidParam(nameFromAPI)) {
+            params.set('n', nameFromAPI);
+          }
+          if (emailFromAPI && isValidParam(emailFromAPI)) {
+            params.set('e', emailFromAPI);
+          }
+          if (phoneFromAPI && isValidParam(phoneFromAPI)) {
+            params.set('p', phoneFromAPI);
+          }
+
+          const redirectUrl = `https://www.homelight.com/simple-sale/quiz?${params.toString()}#/qaas=0/`;
 
           console.log('🔄 Auto-redirecting to:', redirectUrl);
 

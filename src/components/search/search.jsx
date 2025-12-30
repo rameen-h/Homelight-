@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./search.css";
 import { trackButtonClick, trackEvent, buildPageData, waitForAnalytics } from "../../utils/analytics";
+import { callPartialMatchApi } from "../../utils/api";
 
 // Validate if a parameter is "real" (not placeholder/empty)
 function isValidParam(val) {
@@ -27,6 +28,23 @@ const Search = ({ validatedUrl, validatedParams }) => {
   const [isLoading, setIsLoading] = useState(false);
   const addressChosenMethod = useRef("manual"); // Track if from dropdown or manual
   const originalParamsRef = useRef({}); // Store original params for comparison
+
+  // Check for persisted session on mount
+  useEffect(() => {
+    const persistedSession = sessionStorage.getItem('thr_user_session');
+    if (persistedSession) {
+      try {
+        const sessionData = JSON.parse(persistedSession);
+        // Show loading state if user came back
+        if (sessionData.isLoading) {
+          setIsLoading(true);
+          console.log('🔄 Search - Restored session from sessionStorage:', sessionData);
+        }
+      } catch (e) {
+        console.error('Failed to restore session:', e);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const loadMapbox = async () => {
@@ -119,7 +137,7 @@ const Search = ({ validatedUrl, validatedParams }) => {
         window.addEventListener('resize', positionSuggestions);
       }
 
-      geocoder.on("result", (e) => {
+      geocoder.on("result", async (e) => {
         const context = e.result.context || [];
         const addressParts = {
           street: e.result.address
@@ -191,10 +209,72 @@ const Search = ({ validatedUrl, validatedParams }) => {
           redirectAddress = origParts.join(', ');
         }
 
-        // Build redirect URL
+        // Call /v3 API with partial address to get name, phone, email
+        let v3Data = null;
+        try {
+          console.log('🔍 Search Dropdown - Calling /v3 API with address:', redirectAddress);
+          const v3Response = await callPartialMatchApi({ address: redirectAddress });
+          v3Data = v3Response?.data?.[0]?._source || null;
+          console.log('✅ Search Dropdown - /v3 API response:', v3Data);
+        } catch (error) {
+          console.error('❌ Search Dropdown - /v3 API call failed:', error);
+        }
+
+        // Build redirect URL with name, email, phone from v3 API or fallback to validatedParams
         const timestamp = Date.now();
-        const encodedAddress = encodeURIComponent(redirectAddress);
-        const navUrl = `https://www.homelight.com/simple-sale/quiz?interested_in_agent=true?&address=${encodedAddress}&timestamp=${timestamp}#/qaas=0/`;
+
+        // Build query params
+        const params = new URLSearchParams();
+        params.set('interested_in_agent', 'true');
+        params.set('timestamp', timestamp);
+
+        // Prefer v3Data, fallback to validatedParams
+        const name = v3Data?.name || validatedParams?.name || '';
+        const email = v3Data?.email || validatedParams?.email || '';
+        const phone = v3Data?.phone || validatedParams?.phone || '';
+
+        // Add address as plain text (not encoded)
+        if (redirectAddress) {
+          console.log('✅ Search Dropdown - Adding address:', redirectAddress);
+          params.set('address', redirectAddress);
+        }
+
+        // Encode name, email, phone with Base64 for obfuscation
+        if (name && isValidParam(name)) {
+          const encoded = btoa(name);
+          console.log('✅ Search Dropdown - Adding encoded name:', encoded);
+          params.set('n', encoded);
+        }
+        if (phone && isValidParam(phone)) {
+          const encoded = btoa(phone);
+          console.log('✅ Search Dropdown - Adding encoded phone:', encoded);
+          params.set('p', encoded);
+        }
+        if (email && isValidParam(email)) {
+          const encoded = btoa(email);
+          console.log('✅ Search Dropdown - Adding encoded email:', encoded);
+          params.set('e', encoded);
+        }
+
+        // Save session data before redirect
+        try {
+          sessionStorage.setItem('thr_user_session', JSON.stringify({
+            address: redirectAddress,
+            name: name,
+            email: email,
+            phone: phone,
+            isLoading: true,
+            timestamp: timestamp,
+            method: 'dropdown'
+          }));
+          console.log('💾 Saved session to sessionStorage');
+        } catch (e) {
+          console.warn('Could not save session:', e);
+        }
+
+        // Direct redirect to HomeLight (no intermediate page)
+        const navUrl = `https://www.homelight.com/simple-sale/quiz?${params.toString()}#/qaas=0/`;
+        console.log('🔄 Search Dropdown - Redirecting directly to HomeLight:', navUrl);
 
         // Small delay to show loading state
         setTimeout(() => {
@@ -292,7 +372,7 @@ const Search = ({ validatedUrl, validatedParams }) => {
             <a
               href="#"
               className="ss-button ss-explore-btn"
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.preventDefault();
                 const addressValue =
                   searchGeocoderInputRef.current?.value?.trim();
@@ -346,15 +426,87 @@ const Search = ({ validatedUrl, validatedParams }) => {
                   redirectAddress = addressValue;
                 }
 
-                // Build redirect URL
+                // Call /v3 API with partial address to get name, phone, email
+                let v3Data = null;
+                try {
+                  console.log('🔍 Search Button - Calling /v3 API with address:', redirectAddress);
+                  const v3Response = await callPartialMatchApi({ address: redirectAddress });
+                  v3Data = v3Response?.data?.[0]?._source || null;
+                  console.log('✅ Search Button - /v3 API response:', v3Data);
+                } catch (error) {
+                  console.error('❌ Search Button - /v3 API call failed:', error);
+                }
+
+                // Build redirect URL with name, email, phone from v3 API or fallback to validatedParams
                 const timestamp = Date.now();
-                const encodedAddress = encodeURIComponent(redirectAddress);
-                const navUrl = `https://www.homelight.com/simple-sale/quiz?interested_in_agent=true?&address=${encodedAddress}&timestamp=${timestamp}#/qaas=0/`;
+
+                console.log('🔍 Search validatedParams:', validatedParams);
+
+                // Build query params
+                const params = new URLSearchParams();
+                params.set('interested_in_agent', 'true');
+                params.set('timestamp', timestamp);
+
+                // Prefer v3Data, fallback to validatedParams
+                const name = v3Data?.name || validatedParams?.name || '';
+                const email = v3Data?.email || validatedParams?.email || '';
+                const phone = v3Data?.phone || validatedParams?.phone || '';
+
+                // Add address as plain text (not encoded)
+                if (redirectAddress) {
+                  console.log('✅ Search Button - Adding address:', redirectAddress);
+                  params.set('address', redirectAddress);
+                }
+
+                // Encode name, email, phone with Base64 for obfuscation
+                if (name && isValidParam(name)) {
+                  const encoded = btoa(name);
+                  console.log('✅ Search Button - Adding encoded name:', encoded);
+                  params.set('n', encoded);
+                }
+                if (phone && isValidParam(phone)) {
+                  const encoded = btoa(phone);
+                  console.log('✅ Search Button - Adding encoded phone:', encoded);
+                  params.set('p', encoded);
+                }
+                if (email && isValidParam(email)) {
+                  const encoded = btoa(email);
+                  console.log('✅ Search Button - Adding encoded email:', encoded);
+                  params.set('e', encoded);
+                }
+
+                // Save session data before redirect
+                try {
+                  sessionStorage.setItem('thr_user_session', JSON.stringify({
+                    address: redirectAddress,
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    isLoading: true,
+                    timestamp: timestamp,
+                    method: 'button'
+                  }));
+                  console.log('💾 Saved session to sessionStorage');
+                } catch (e) {
+                  console.warn('Could not save session:', e);
+                }
+
+                // Direct redirect to HomeLight (no intermediate page)
+                const navUrl = `https://www.homelight.com/simple-sale/quiz?${params.toString()}#/qaas=0/`;
+                console.log('✅ Search Button - Redirecting directly to HomeLight:', navUrl);
+
                 window.location.href = navUrl;
               }}
               disabled={isLoading}
             >
-              {isLoading ? "Loading" : "Get estimate"}
+              {isLoading ? (
+                <span className="loading-spinner-wrapper">
+                  <span className="loading-spinner"></span>
+                  <span>Loading...</span>
+                </span>
+              ) : (
+                "Get estimate"
+              )}
             </a>
           </div>
         </div>

@@ -31,7 +31,7 @@ const isValidParam = (val) => {
  * @param {Object} params - Parameters for the partial match API
  * @returns {Promise<Object>} Response from partial match API
  */
-const callPartialMatchApi = async (params) => {
+export const callPartialMatchApi = async (params) => {
   const queryParams = new URLSearchParams();
 
   if (params.address) queryParams.set('address', params.address);
@@ -252,9 +252,12 @@ export const validateLandingPage = async (currentUrl) => {
             email: email,
           });
 
+          console.log('🔍 v3 API Response:', partialMatchData);
+
           // Merge data, preferring partial match API results
           if (partialMatchData?.data?.[0]) {
             const partialSource = partialMatchData.data[0]._source || {};
+            console.log('✅ v3 API _source data:', partialSource);
 
             // Update _source with merged data
             data.data[0] = data.data[0] || {};

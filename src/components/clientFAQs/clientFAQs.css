@@ -1,12 +1,12 @@
 .faq-section {
-  max-width: 900px;  /* Ensuring the section fits well */
-  margin: 0 auto;    /* Keeping the section centered within the page */
-  padding: 20px;     /* Adjusted padding */
+  max-width: 100%;  /* Full width to cover entire area */
+  margin: 0 0 0 80px;  /* More left margin */
+  padding: 20px 120px 20px 40px;  /* Much more right padding for arrow space */
   text-align: left;  /* Align the text inside the FAQ section to the left */
 }
 
 .faq-heading {
-  text-align: center;  /* Keep header centered */
+  text-align: left;  /* Align header to the left */
   font-size: 1.8rem;    /* Smaller font for header */
   margin-bottom: 1.5rem; /* Spacing between header and questions */
 }
@@ -14,7 +14,7 @@
 .accordion {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;  /* Reduced gap between questions */
+  gap: 1.5rem;  /* Increased gap between questions */
 }
 
 .accordion-node {
@@ -28,13 +28,17 @@
   align-items: center;
   cursor: pointer;
   font-size: 1rem;
-  padding: 10px 0;  /* Added space between question and divider */
+  padding: 20px 0;  /* Increased padding for more spacing */
+  gap: 40px;  /* Gap between question and arrow */
+  position: relative;  /* For absolute positioning of arrow */
 }
 
 .accordion-question {
   font-weight: bold;
   margin: 0;
   text-align: left; /* Ensure question text is aligned left */
+  flex: 1;  /* Allow question to take available space */
+  padding-right: 40px;  /* Space for arrow on the right */
 }
 
 .accordion-btn {
@@ -43,6 +47,9 @@
   padding: 0;
   margin: 0;
   cursor: pointer;
+  flex-shrink: 0;  /* Prevent arrow from shrinking */
+  position: absolute;  /* Position arrow absolutely */
+  right: 0;  /* Move arrow much further right */
 }
 
 .chevron {
@@ -57,10 +64,10 @@
 }
 
 .accordion-body {
-  padding: 10px 0; /* Padding for the answer section */
+  padding: 15px 20px; /* Increased padding for the answer section */
   font-size: 0.95rem;  /* Slightly smaller font for the answers */
   color: #444;
-  background-color: #f9f9f9;
+  background-color: transparent; /* Remove grey background */
   text-align: left; /* Ensure answer text is aligned left */
 }
 
@@ -68,6 +75,9 @@
   margin: 10px 0;
   border: 0;
   border-top: 1px solid #ddd;
+  width: 100%;  /* Line extends to match where arrow is */
+  position: relative;
+  left: 0;
 }
 
 /* iPhone specific styles */

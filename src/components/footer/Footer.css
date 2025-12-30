@@ -126,6 +126,29 @@ ul.lending-license {
   padding: 0 15px;  /* Padding to add space on the sides */
 }
 
+/* Footer text styling */
+.footer-text {
+  text-align: center;
+  padding: 20px 40px;
+  color: #6b7280;
+  font-size: 0.875rem;
+  line-height: 1.8;
+}
+
+.footer-text p {
+  margin: 8px 0;
+}
+
+.footer-text a {
+  color: #6b7280;
+  text-decoration: none;
+  margin: 0 8px;
+}
+
+.footer-text a:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 767px) {
   .footer-container {
     padding: 12px;

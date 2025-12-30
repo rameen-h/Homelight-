@@ -59,13 +59,13 @@ const Header = () => {
             <img
               alt="Homelight Logo"
               className={`logo top ${!scrolled ? "show" : ""}`}
-              src="/logo_normal.png"
+              src="/trusted-home-reports-logo.png"
               width="153"
             />
             <img
               alt="Homelight Logo"
               className={`logo scrolled ${scrolled ? "show" : ""}`}
-              src="/logo-new.png"
+              src="/trusted-home-reports-logo.png"
               width="153"
             />
           </a>

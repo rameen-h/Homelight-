@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirecting to HomeLight...</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      color: #fff;
+    }
+
+    .container {
+      text-align: center;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    p {
+      font-size: 16px;
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+
+    .logo {
+      width: 120px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="/trusted-home-reports-logo.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+    <div class="spinner"></div>
+    <h1>Preparing Your Quote...</h1>
+    <p>Please wait while we redirect you to HomeLight with your information.</p>
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+
+      // Function to decode Base64 parameter
+      function decodeParam(encoded) {
+        try {
+          return atob(encoded);
+        } catch (e) {
+          console.error('Failed to decode parameter:', e);
+          return '';
+        }
+      }
+
+      // Get URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+
+      // Decode parameters
+      const address = urlParams.get('address') || ''; // Plain text
+      const name = urlParams.get('n') ? decodeParam(urlParams.get('n')) : ''; // Encoded
+      const phone = urlParams.get('p') ? decodeParam(urlParams.get('p')) : ''; // Encoded
+      const email = urlParams.get('e') ? decodeParam(urlParams.get('e')) : ''; // Encoded
+      const interestedInAgent = urlParams.get('interested_in_agent') || 'true';
+      const timestamp = urlParams.get('timestamp') || Date.now();
+
+      console.log('🔍 Decoded parameters:', { address, name, phone, email });
+
+      // Build HomeLight URL with decoded parameters
+      const homelightParams = new URLSearchParams();
+      homelightParams.set('interested_in_agent', interestedInAgent);
+      homelightParams.set('timestamp', timestamp);
+
+      if (address) homelightParams.set('address', address);
+      if (name) homelightParams.set('name', name);
+      if (phone) homelightParams.set('phone', phone);
+      if (email) homelightParams.set('email', email);
+
+      const homelightUrl = `https://www.homelight.com/simple-sale/quiz?${homelightParams.toString()}#/qaas=0/`;
+
+      console.log('🔄 Redirecting to:', homelightUrl);
+
+      // Store in sessionStorage for potential use by HomeLight
+      try {
+        sessionStorage.setItem('hl_prefill_data', JSON.stringify({
+          address: address,
+          name: name,
+          email: email,
+          phone: phone
+        }));
+      } catch (e) {
+        console.warn('Could not set sessionStorage:', e);
+      }
+
+      // Redirect after a short delay (for user experience)
+      setTimeout(() => {
+        window.location.href = homelightUrl;
+      }, 1500);
+    })();
+  </script>
+</body>
+</html>
