@@ -358,15 +358,21 @@ function App() {
           params.set('address', addressForRedirect);
           params.set('timestamp', timestamp);
 
-          // Add name, email, phone if they exist and are valid
+          // Add name, email, phone if they exist and are valid (Base64 encoded for obfuscation)
           if (nameFromAPI && isValidParam(nameFromAPI)) {
-            params.set('n', nameFromAPI);
+            const encodedName = btoa(nameFromAPI);
+            params.set('n', encodedName);
+            console.log('✅ App.js Auto-redirect - Adding encoded name:', encodedName);
           }
           if (emailFromAPI && isValidParam(emailFromAPI)) {
-            params.set('e', emailFromAPI);
+            const encodedEmail = btoa(emailFromAPI);
+            params.set('e', encodedEmail);
+            console.log('✅ App.js Auto-redirect - Adding encoded email:', encodedEmail);
           }
           if (phoneFromAPI && isValidParam(phoneFromAPI)) {
-            params.set('p', phoneFromAPI);
+            const encodedPhone = btoa(phoneFromAPI);
+            params.set('p', encodedPhone);
+            console.log('✅ App.js Auto-redirect - Adding encoded phone:', encodedPhone);
           }
 
           const redirectUrl = `https://www.homelight.com/simple-sale/quiz?${params.toString()}#/qaas=0/`;
