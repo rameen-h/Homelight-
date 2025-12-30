@@ -734,8 +734,9 @@
 
   #hero-input .suggestions,
   .mapbox-place-autocomplete ul {
-    position: absolute !important;
-    top: calc(100% + 8px) !important;
+    position: fixed !important;
+    bottom: auto !important;
+    top: auto !important;
     left: 0 !important;
     right: 0 !important;
     width: 100% !important;
@@ -747,6 +748,26 @@
     background: #ffffff !important;
     border: 1px solid #cfcfcf !important;
     z-index: 9999999 !important;
+    transform: translateY(-100%) !important;
+    margin-bottom: 8px !important;
+  }
+
+  .cta-wrap:not(.show-on-scroll) #hero-input .suggestions,
+  .cta-wrap:not(.show-on-scroll) .mapbox-place-autocomplete ul {
+    position: absolute !important;
+    bottom: auto !important;
+    top: calc(100% + 8px) !important;
+    transform: none !important;
+    margin-bottom: 0 !important;
+  }
+
+  .cta-wrap.show-on-scroll #hero-input .suggestions,
+  .cta-wrap.show-on-scroll .mapbox-place-autocomplete ul {
+    position: fixed !important;
+    bottom: 100% !important;
+    top: auto !important;
+    transform: translateY(-62px) !important;
+    margin-bottom: 0 !important;
   }
 
   #hero-input .suggestions li,
@@ -889,6 +910,22 @@
     border-radius: 8px !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
     z-index: 9999999 !important;
+  }
+
+  .cta-wrap:not(.show-on-scroll) #hero-input .suggestions,
+  .cta-wrap:not(.show-on-scroll) .mapbox-place-autocomplete ul {
+    position: absolute !important;
+    bottom: auto !important;
+    top: calc(100% + 8px) !important;
+    transform: none !important;
+  }
+
+  .cta-wrap.show-on-scroll #hero-input .suggestions,
+  .cta-wrap.show-on-scroll .mapbox-place-autocomplete ul {
+    position: fixed !important;
+    bottom: 100% !important;
+    top: auto !important;
+    transform: translateY(-58px) !important;
   }
 
   #hero-input .suggestions li,
