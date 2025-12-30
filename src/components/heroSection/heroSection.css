@@ -746,7 +746,7 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
     background: #ffffff !important;
     border: 1px solid #cfcfcf !important;
-    z-index: 999999 !important;
+    z-index: 9999999 !important;
   }
 
   #hero-input .suggestions li,
@@ -888,6 +888,7 @@
     max-height: 250px !important;
     border-radius: 8px !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    z-index: 9999999 !important;
   }
 
   #hero-input .suggestions li,
