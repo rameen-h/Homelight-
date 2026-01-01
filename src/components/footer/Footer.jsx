@@ -10,7 +10,7 @@ const Footer = () => {
           <div className="footer-text">
             <p className="footer-line-1">
               © Trusted Home Reports Inc., 30 N Gould St, Ste 26362, Sheridan, Wyoming, United States 82801
-              <a href="/terms">Terms of Service</a> <a href="/privacy-policy">Privacy Policy</a>
+              <a href="/terms-of-use">Terms of Service</a> <a href="/privacy-policy">Privacy Policy</a>
             </p>
             <p className="footer-line-2">
               <a href="/privacy-policy#opt-out">Do Not Sell or Share My Personal Information</a>
