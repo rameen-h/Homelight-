@@ -63,7 +63,9 @@ const PromoSection = ({ validatedParams, validatedUrl }) => {
   // Scroll listener for showing/hiding CTA on mobile
   useEffect(() => {
     const handleScroll = () => {
-      if (window.innerWidth <= 430 && ctaWrapRef.current) {
+      if (!ctaWrapRef.current) return;
+
+      if (window.innerWidth <= 430) {
         const scrollY = window.scrollY || window.pageYOffset;
         const heroHeight = window.innerHeight * 0.6; // Show after scrolling 60% of viewport
 
@@ -72,14 +74,23 @@ const PromoSection = ({ validatedParams, validatedUrl }) => {
         } else {
           ctaWrapRef.current.classList.remove('show-on-scroll');
         }
+      } else {
+        // Remove class when not on mobile view
+        ctaWrapRef.current.classList.remove('show-on-scroll');
       }
     };
 
+    const handleResize = () => {
+      handleScroll(); // Re-check on resize
+    };
+
     window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleResize);
     handleScroll(); // Check initial state
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
