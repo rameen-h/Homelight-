@@ -84,6 +84,10 @@ const PromoSection = ({ validatedParams, validatedUrl }) => {
       } else {
         // Remove class when not on mobile view
         ctaWrapRef.current.classList.remove('show-on-scroll');
+
+        // Clear loading state when switching to desktop view
+        setIsLoading(false);
+        sessionStorage.removeItem('thr_user_session');
       }
     };
 
