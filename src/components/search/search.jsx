@@ -39,6 +39,13 @@ const Search = ({ validatedUrl, validatedParams }) => {
         if (sessionData.isLoading) {
           setIsLoading(true);
           console.log('🔄 Search - Restored session from sessionStorage:', sessionData);
+
+          // Auto-clear loading state after 60 seconds (user came back, so stop loading)
+          setTimeout(() => {
+            setIsLoading(false);
+            sessionStorage.removeItem('thr_user_session');
+            console.log('✅ Search - Cleared loading state after user returned');
+          }, 60000);
         }
       } catch (e) {
         console.error('Failed to restore session:', e);

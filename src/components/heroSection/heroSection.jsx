@@ -42,6 +42,13 @@ const PromoSection = ({ validatedParams, validatedUrl }) => {
           setIsLoading(true);
           setPrepopulatedAddress(sessionData.address || '');
           console.log('🔄 Restored session from sessionStorage:', sessionData);
+
+          // Auto-clear loading state after 60 seconds (user came back, so stop loading)
+          setTimeout(() => {
+            setIsLoading(false);
+            sessionStorage.removeItem('thr_user_session');
+            console.log('✅ Cleared loading state after user returned');
+          }, 60000);
         }
       } catch (e) {
         console.error('Failed to restore session:', e);
