@@ -70,7 +70,7 @@ export const buildPageData = (sessionId = '', invalidFields = [], validatedUrl =
     utmMedium: searchParams.get("utm_medium") || '',
     utmCampaign: searchParams.get("utm_campaign") || '',
     utmTerm: searchParams.get("utm_term") || '',
-    utmContent: searchParams.get("utm_content") || finalSessionId,
+    utmContent: searchParams.get("utm_content") || '',
     tuneId: searchParams.get("tuneId") || '',
     fbclid: searchParams.get("fbclid") || '',
     gclid: searchParams.get("gclid") || '',

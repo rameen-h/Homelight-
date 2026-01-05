@@ -71,8 +71,7 @@ export const generateSessionId = async () => {
     const parser = new URL(window.location.href);
     const searchParams = parser.searchParams;
 
-    // Update URL parameters with session ID
-    searchParams.set('utm_content', savedSessionId);
+    // Update URL parameters with session ID (preserve original utm_content if exists)
     searchParams.set('sessionId', savedSessionId);
     searchParams.set('d', '1');
     searchParams.set('checkoutId', '28');
@@ -122,10 +121,9 @@ export const generateSessionId = async () => {
     window.alysonSessionId = sessionId;
     sessionStorage.setItem('alysonSessionId', sessionId);
 
-    // Update URL parameters - utm_content and sessionId are the same
+    // Update URL parameters with session ID (preserve original utm_content if exists)
     const parser = new URL(window.location.href);
     const searchParams = parser.searchParams;
-    searchParams.set('utm_content', sessionId);
     searchParams.set('sessionId', sessionId);
     searchParams.set('d', '1');
     searchParams.set('checkoutId', '28');

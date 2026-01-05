@@ -230,8 +230,8 @@ const Search = ({ validatedUrl, validatedParams }) => {
         // Build redirect URL with name, email, phone from v3 API or fallback to validatedParams
         const timestamp = Date.now();
 
-        // Build query params
-        const params = new URLSearchParams();
+        // Build query params - preserve existing URL params (UTM, session ID, etc.)
+        const params = new URLSearchParams(window.location.search);
         params.set('interested_in_agent', 'true');
         params.set('timestamp', timestamp);
 

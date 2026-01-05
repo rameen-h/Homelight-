@@ -352,8 +352,8 @@ function App() {
           const emailFromAPI = result?.data?.[0]?._source?.email || '';
           const phoneFromAPI = result?.data?.[0]?._source?.phone || '';
 
-          // Build query params
-          const params = new URLSearchParams();
+          // Build query params - preserve existing URL params (UTM, session ID, etc.)
+          const params = new URLSearchParams(window.location.search);
           params.set('interested_in_agent', 'true');
           params.set('address', addressForRedirect);
           params.set('timestamp', timestamp);
