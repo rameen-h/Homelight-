@@ -75,6 +75,11 @@ export const buildPageData = (sessionId = '', invalidFields = [], validatedUrl =
     fbclid: searchParams.get("fbclid") || '',
     gclid: searchParams.get("gclid") || '',
 
+    // Additional tracking parameters
+    experiment_id: searchParams.get("eid") || '',
+    d: searchParams.get("d") || '',
+    checkoutId: searchParams.get("checkoutId") || '',
+
     // Prepopulated fields (from URL params - RAW values, not validated)
     prepop_email: searchParams.get("email") || '',
     prepop_phone: searchParams.get("phone") || '',
